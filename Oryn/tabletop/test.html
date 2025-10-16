@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Grid Isométrica + Menu Expandível</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<!-- Submenu -->
+<div id="submenu"></div>
+
+<!-- Barra inferior -->
+<div id="bottomBar">
+  <img src="cena.png" data-cat="cenas" title="Cenas">
+  <img src="mapa.png" data-cat="mapas" title="Maps">
+  <img src="prop.png" data-cat="props" title="Props">
+  <img src="token.png" data-cat="tokens" title="Characters">
+  <img src="attachment.png" data-cat="attachments" title="Attachments">
+  <img src="notes.png" data-cat="docs" title="Notes">
+  <div class="separator"></div>
+  <div id="addButton">+</div>
+</div>
+
+<!-- Modais -->
+<div id="modalOverlay">
+  <div id="modalNew">
+    <header>
+      <h2>Assets</h2>
+      <div class="actions">
+        <button id="openAddModal" class="add">+ ADD</button>
+        <button id="closeBtn">×</button>
+      </div>
+    </header>
+    <div class="tabs">
+      <button class="active" data-cat="cenas">Scenes</button>
+      <button data-cat="mapas">Maps</button>
+      <button data-cat="props">Props</button>
+      <button data-cat="tokens">Characters</button>
+      <button data-cat="attachments">Attachments</button>
+      <button data-cat="docs">Notes</button>
+    </div>
+    <div class="assetsGrid" id="assetsGrid"></div>
+  </div>
+
+  <div id="modalAdd">
+    <div class="modalAddHeader">
+      <div class="tabsAdd"><button class="active">NEW</button></div>
+      <h2>Characters</h2>
+      <button id="closeAddBtn">×</button>
+    </div>
+    <div class="modalAddBody">
+      <div class="uploadArea">
+        <div class="uploadBox" id="uploadBox">
+          <input type="file" id="fileInput" style="display:none" accept="image/*">
+          <span class="icon">🖼️</span>
+          <p><a id="uploadLink">Click to upload</a> or drag and drop</p>
+          <img id="previewImg" class="uploadPreview" style="display:none">
+        </div>
+      </div>
+      <div class="sidebar">
+        <h3>Import Settings</h3>
+        <div class="field">
+          <label>Visible</label>
+          <div class="toggle" id="visibleToggle">
+            <button data-value="false">🙈</button>
+            <button data-value="true" class="active">👁️</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Locked</label>
+          <div class="toggle" id="lockedToggle">
+            <button data-value="false">🔓</button>
+            <button data-value="true" class="active">🔒</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Size</label>
+          <select id="sizeSelect">
+            <option>Auto</option>
+            <option>Small</option>
+            <option>Medium</option>
+            <option>Large</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Rotation</label>
+          <input type="number" id="rotationInput" value="0.00">
+        </div>
+        <h3>Text Controls</h3>
+        <div class="field">
+          <label>Font Size</label>
+          <input type="number" id="fontSizeInput" value="24">
+        </div>
+        <div class="field">
+          <label>Font Family</label>
+          <select id="fontFamilySelect">
+            <option>Rounded</option>
+            <option>Serif</option>
+            <option>Mono</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Default Text</label>
+          <select id="defaultTextSelect">
+            <option>None</option>
+            <option>Sample</option>
+          </select>
+        </div>
+        <button class="importBtn" id="importBtn">IMPORT</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Menu lateral -->
+<div id="rightMenuToggle">☰</div>
+<div id="rightMenu">
+  <button data-tool="hand" data-tooltip="Mover Tokens"><i data-lucide="hand"></i></button>
+  <button data-tool="draw" data-tooltip="Desenhar"><i data-lucide="pen-tool"></i></button>
+  <button data-tool="ruler" data-tooltip="Régua"><i data-lucide="ruler"></i></button>
+  <button data-tool="fog" data-tooltip="Fog of War"><i data-lucide="eye-off"></i></button>
+  <button data-tool="pointer" data-tooltip="Pointer"><i data-lucide="mouse-pointer"></i></button>
+</div>
+
+<div id="miniJanela" class="mini-janela"></div>
+
+<script src="script.js"></script>
+<script src="script2.js"></script>
+<script>document.addEventListener('DOMContentLoaded', () => { lucide.createIcons(); });</script>
+</body>
+</html>

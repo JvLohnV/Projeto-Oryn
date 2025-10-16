@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sala - Tabletop</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #000000, #4B0082);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+  }
+  #room-container { text-align: center; }
+  input { padding: 10px; margin: 10px 0; border-radius: 6px; border: none; }
+  button { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div id="room-container">
+  <h1 id="room-name">Carregando...</h1>
+  <div id="password-container" style="display:none;">
+    <input type="password" id="room-password" placeholder="Digite a senha">
+    <button onclick="joinRoom()">Entrar</button>
+  </div>
+  <div id="room-content" style="display:none;">
+    <p>Bem-vindo à sala! 🎲</p>
+    <!-- Aqui você pode colocar o tabletop ou chat -->
+  </div>
+</div>
+
+<script>
+const supabaseUrl = "https://oxlhrwkbsxepurfzvcdw.supabase.co";   // <-- troque pelo seu
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94bGhyd2tic3hlcHVyZnp2Y2R3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4MDk4NjcsImV4cCI6MjA3NDM4NTg2N30.wzXQ3oAvmp0kGsTzxE86gJoD8GlEPZtWHeWhWFX3VOo";               // <-- troque pelo seu
+const urlParams = new URLSearchParams(window.location.search);
+const roomId = urlParams.get('id');
+let roomData = null;
+
+async function checkUser() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    // Não logado, redireciona para a página de login
+    window.location.href = 'index.html';
+  } else {
+    loadRoom();
+  }
+}
+
+async function loadRoom() {
+  const { data, error } = await supabase
+    .from('salas')
+    .select('*')
+    .eq('id', roomId)
+    .single();
+
+  if (error || !data) {
+    alert('Sala não encontrada!');
+    return;
+  }
+
+  roomData = data;
+  document.getElementById('room-name').textContent = data.nome;
+
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (data.senha && data.user_id !== user.id) {
+    // Sala tem senha e usuário não é o criador
+    document.getElementById('password-container').style.display = 'block';
+  } else {
+    // Sem senha ou usuário é criador
+    document.getElementById('room-content').style.display = 'block';
+  }
+}
+
+async function joinRoom() {
+  const password = document.getElementById('room-password').value;
+  if (password !== roomData.senha) {
+    alert('Senha incorreta!');
+    return;
+  }
+  document.getElementById('password-container').style.display = 'none';
+  document.getElementById('room-content').style.display = 'block';
+}
+
+// Observa mudanças de login
+supabase.auth.onAuthStateChange((_event, session) => {
+  checkUser();
+});
+
+// Checa o login assim que carrega
+checkUser();
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+/* Geral do corpo e layout */
+body {
+  font-family: 'Franklin Gothic Medium','Arial Narrow',sans-serif;
+  margin:0; padding:0;
+  min-height:100vh;
+  background: linear-gradient(135deg,#0d1b2a,#1a2a4d);
+  color:#e0e0e0;
+  position:relative;
+  overflow:hidden;
+}
+
+/* Canvas de partículas */
+#bgParticles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}

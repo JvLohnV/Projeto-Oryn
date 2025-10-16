@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Anotações - neXus</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      color: #fff;
+      overflow: hidden;
+    }
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      display: flex;
+      gap: 20px;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2;
+    }
+    header a {
+      color: #ccc;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    header a:hover {
+      color: #fff;
+    }
+    #notes {
+      position: relative;
+      z-index: 1;
+      margin: 100px auto;
+      max-width: 800px;
+      padding: 20px;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+    }
+    textarea {
+      width: 100%;
+      height: 400px;
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 5px;
+      padding: 10px;
+      resize: vertical;
+      font-family: monospace;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: rgba(255,255,255,0.3);
+    }
+  </style>
+</head>
+<body>
+  <!-- Canvas partículas -->
+  <canvas id="bgParticles"></canvas>
+
+  <header>
+    <a href="../menu.html">Menu</a>
+    <a href="../Mapa/mapa.html">Mapa</a>
+    <a href="#">Anotações</a>
+  </header>
+
+  <div id="notes">
+    <h2>Anotações</h2>
+    <textarea id="noteArea" placeholder="Escreva suas anotações aqui..."></textarea>
+    <button onclick="saveNote()">Salvar</button>
+  </div>
+
+  <script>
+    // ===== partículas de fundo =====
+    const canvas = document.getElementById('bgParticles');
+    const ctx = canvas.getContext('2d');
+    function resize() {
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.vx = Math.random() * 1 - 0.5;
+        this.vy = Math.random() * 1 - 0.5;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+      }
+      draw() {
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+    const particles = Array.from({length:100},()=>new Particle());
+    (function animate(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      particles.forEach(p=>{p.update();p.draw();});
+      requestAnimationFrame(animate);
+    })();
+
+    // ===== notas simples com localStorage =====
+    const noteArea = document.getElementById('noteArea');
+    function saveNote() {
+      localStorage.setItem('nexus_notes', noteArea.value);
+      alert("Anotações salvas!");
+    }
+    // carregar ao abrir
+    noteArea.value = localStorage.getItem('nexus_notes') || "";
+  </script>
+</body>
+</html>

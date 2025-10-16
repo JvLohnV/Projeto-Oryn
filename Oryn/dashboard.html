@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>neXus Dashboard</title>
+  <!-- Fonte Orbitron -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif; /* fonte futurista */
+      background: #111;
+      color: #eee;
+      display: flex;
+    }
+
+    /* Sidebar */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background: linear-gradient(180deg, #570000, #200000);
+      transition: left 0.3s ease;
+      box-shadow: 3px 0 8px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+    }
+    #sidebar.open {
+      left: 0;
+    }
+
+    /* Título (logo) */
+    #sidebar .logo {
+      text-align: center;
+      padding: 20px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    #sidebar .logo img {
+      max-width: 180px;
+      height: auto;
+    }
+
+    /* Perfil */
+    #sidebar .profile {
+      text-align: center;
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    #sidebar .profile img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+    #sidebar .profile h3 {
+      margin: 0;
+      font-size: 16px;
+      color: #fdd835; /* dourado */
+    }
+
+    #sidebar nav {
+      flex: 1;
+      padding: 10px;
+    }
+    #sidebar nav a {
+      display: block;
+      padding: 12px;
+      margin: 6px 0;
+      border-radius: 8px;
+      color: #eee;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    #sidebar nav a:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* Toggle button */
+    #menu-toggle {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: #9a1b1b;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      font-size: 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 1000;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    /* Main content */
+    #main {
+      margin-left: 0;
+      padding: 20px;
+      transition: margin-left 0.3s ease;
+      flex: 1;
+    }
+    #sidebar.open ~ #main {
+      margin-left: 250px;
+    }
+  </style>
+</head>
+<body>
+  <button id="menu-toggle">☰</button>
+
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <div class="logo">
+      <img src="titulo.png" alt="neXus">
+    </div>
+    <div class="profile">
+      <img id="user-avatar" src="" alt="User">
+      <h3 id="user-name">Usuário</h3>
+    </div>
+    <nav>
+      <a href="Triplice_Tenebrosa/Mesinha.html"> Triple Triad</a>
+      <a href="sistemas/sistemas.html"> Sistemas</a>
+      <a href="tabletop/test.html"> Tabletop</a>
+      <a href="#" id="logout"> Sair</a>
+    </nav>
+  </div>
+
+  <!-- Main -->
+  <div id="main">
+    <h1>Bem-vindo ao Oryn</h1>
+    <p>Escolha uma das seções no menu lateral para continuar.</p>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    const supabase = createClient(
+      "https://oxlhrwkbsxepurfzvcdw.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94bGhyd2tic3hlcHVyZnp2Y2R3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4MDk4NjcsImV4cCI6MjA3NDM4NTg2N30.wzXQ3oAvmp0kGsTzxE86gJoD8GlEPZtWHeWhWFX3VOo"
+    );
+
+    const toggleBtn = document.getElementById("menu-toggle");
+    const sidebar = document.getElementById("sidebar");
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+    });
+
+    // Função para checar usuário logado
+    async function loadUser() {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        // Se não tem sessão, redireciona pro login
+        window.location.href = "index.html";
+        return;
+      }
+
+      const user = session.user;
+      document.getElementById("user-name").innerText = user.user_metadata.full_name || "Sem Nome";
+      document.getElementById("user-avatar").src = user.user_metadata.avatar_url || "https://via.placeholder.com/60";
+    }
+
+    loadUser();
+
+    // Logout
+    document.getElementById("logout").addEventListener("click", async () => {
+      await supabase.auth.signOut();
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>

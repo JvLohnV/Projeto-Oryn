@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistemas - neXus</title>
+  <!-- Fonte futurista -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif; /* fonte futurista */
+      background: #0d0d0f;
+      color: #eee;
+      display: flex;
+      letter-spacing: 0.5px;
+    }
+
+    /* Sidebar */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background: linear-gradient(180deg, #570000, #150000);
+      transition: left 0.3s ease;
+      box-shadow: 3px 0 8px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      z-index: 1001;
+    }
+    #sidebar.open {
+      left: 0;
+    }
+
+    /* Logo titulo.png */
+    #sidebar .logo {
+      text-align: center;
+      padding: 20px 20px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    #sidebar .logo img {
+      max-width: 90%;
+      height: auto;
+    }
+
+    /* User info */
+    #user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    #user-info img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+    #user-info span {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fdd835;
+    }
+
+    /* Nav alinhado */
+    #sidebar nav {
+      flex: 1;
+      padding: 20px;
+    }
+    #sidebar nav a,
+    #logout {
+      display: block;
+      padding: 12px;
+      margin: 6px 0;
+      border-radius: 8px;
+      color: #eee;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    #sidebar nav a:hover,
+    #logout:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateX(5px);
+    }
+
+    /* Toggle button */
+    #menu-toggle {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: #9a1b1b;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      font-size: 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 1100;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      transition: background 0.2s;
+    }
+    #menu-toggle:hover {
+      background: #aa2424;
+    }
+
+    /* Main */
+    #main {
+      margin-left: 0;
+      padding: 20px;
+      transition: margin-left 0.3s ease;
+      flex: 1;
+    }
+    #sidebar.open ~ #main {
+      margin-left: 250px;
+    }
+    #main h1 {
+      color: #fdd835;
+      margin-bottom: 30px;
+      padding-left: 60px; /* afasta do botão */
+      font-size: 28px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* Cards */
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 25px;
+      justify-content: center;
+    }
+    .card {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      overflow: hidden;
+      border-radius: 14px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.6);
+      cursor: pointer;
+      background: #1a001f;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+    }
+    .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.9;
+      transition: opacity 0.3s;
+    }
+    .card:hover img {
+      opacity: 1;
+    }
+    .card .overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px;
+      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+      color: #fff;
+      text-align: center;
+    }
+    .overlay h2 {
+      margin: 0;
+      font-size: 13px;
+      color: #fdd835;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .overlay p {
+      margin: 3px 0 0;
+      font-size: 10px;
+      color: #bbb;
+    }
+  </style>
+</head>
+<body>
+  <button id="menu-toggle" aria-label="Abrir menu lateral">☰</button>
+
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <div class="logo">
+      <img src="titulo.png" alt="neXus">
+    </div>
+    <div id="user-info">
+      <img id="user-avatar" src="https://via.placeholder.com/60" alt="Avatar">
+      <span id="user-name">Carregando...</span>
+    </div>
+    <nav>
+      <a href="../dashboard.html"> Dashboard</a>
+      <a href="../Triplice_Tenebrosa/Mesinha.html"> Triple Triad</a>
+      <a href="../sistemas/sistemas.html"> Sistemas</a>
+      <a href="../tabletop/test.html"> Tabletop</a>
+      <div id="logout">Sair</div>
+    </nav>
+  </div>
+
+  <!-- Main -->
+  <div id="main">
+    <h1>Sistemas de RPG</h1>
+    <div class="cards">
+      <div class="card" id="hollow-card">
+        <img src="hollow.png" alt="Hollow Knight RPG">
+        <div class="overlay">
+          <h2>Hollow Knight RPG</h2>
+          <p>Explore Hallownest.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    const supabase = createClient(
+      "https://SEU-PROJECT.supabase.co",
+      "SEU-ANON-KEY"
+    );
+
+    const toggleBtn = document.getElementById("menu-toggle");
+    const sidebar = document.getElementById("sidebar");
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+    });
+
+    async function loadUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        document.getElementById("user-name").innerText =
+          user.user_metadata.full_name || "Sem Nome";
+        document.getElementById("user-avatar").src =
+          user.user_metadata.avatar_url || "https://via.placeholder.com/60";
+      }
+    }
+    loadUser();
+
+    const logoutBtn = document.getElementById("logout");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", async () => {
+        await supabase.auth.signOut();
+        window.location.href = "/neXus/index.html";
+      });
+    }
+
+    // Card Hollow Knight → redireciona
+    const hollowCard = document.getElementById("hollow-card");
+    if (hollowCard) {
+      hollowCard.addEventListener("click", () => {
+        window.location.href = "hollow/menu.html";
+      });
+    }
+  </script>
+</body>
+</html>

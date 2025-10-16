@@ -1,0 +1,443 @@
+/* (Seu CSS original mantido; adicionei regras novas relacionadas ao botão e efeito azul) */
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: radial-gradient(circle at center, #131826, #0a0e14);
+  color: #ddd;
+  font-family: 'Cinzel', serif;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Container externo: coluna de atributos + coluna lateral */
+.column-wrapper {
+  display: flex;           /* colunas lado a lado */
+  flex-direction: row;
+  align-items: flex-start; /* topo das colunas */
+  gap: 20px;               /* espaço entre colunas */
+}
+
+/* Coluna original: radar, atributos, overlay */
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding-top: 120px; /* espaço para o Steel_Soul colar no topo */
+}
+
+/* botão hexagonal acima da vida */
+.hex-button {
+  position: absolute;
+  top: 8px; /* ajusta a posição acima da mask-row */
+  left: 40%; /* alinha com a mesma referência da mask-row */
+  transform: translateX(-50%);
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(180deg, #0f2a4a, #06305a);
+  color: #cfe9ff;
+  border: 2px solid rgba(160,200,255,0.15);
+  clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0% 50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  font-size: 20px;
+  line-height: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6), 0 0 10px rgba(70,150,255,0.05) inset;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s;
+}
+
+.hex-button:hover {
+  transform: translateX(-50%) translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.7), 0 0 18px rgba(70,150,255,0.18) inset;
+}
+
+/* Coluna de Status com Radar */
+.status-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 220px;
+  background: rgba(20, 29, 45, 0.85);
+  padding: 15px;
+  margin-top: 40px; /* desce os atributos para não encostar no topo */
+  border-radius: 14px;
+  box-shadow: inset 0 0 20px rgba(255,255,255,0.08),
+              0 0 12px rgba(0,0,0,0.8);
+  position: relative;
+}
+
+/* Coluna de Status com Radar */
+.crest-column {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 130px;  /* desce o conjunto */
+}
+
+/* Wrapper do Dream Catcher */
+.crest-wrapper {
+  position: relative;
+  width: 430px;   /* aumenta para acompanhar o crest maior */
+  height: 430px;
+}
+
+/* Dream Catcher centralizado */
+.dream-crest {
+  width: 100%;
+  height: auto;
+  position: relative;
+  z-index: 2;
+}
+
+/* Notches circulares ao redor */
+.notch {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+/* Distribuição aproximada dos 6 notches em círculo */
+.notch1 { top: 0%;   left: 50%; }
+.notch2 { top: 20%;  left: 75%; }
+.notch3 { top: 70%;  left: 70%; }
+.notch4 { top: 90%;  left: 50%; }
+.notch5 { top: 70%;  left: 30%; }
+.notch6 { top: 20%;  left: 25%; }
+.notch7 { top: 49%;  left: 50%; } /* notch extra */
+
+/* Overlay de imagens: Steel Soul */
+.life-png {
+  width: 320px;
+  top: 0; /* cola no topo da coluna */
+  left: 58%;
+  transform: translateX(-50%);
+  z-index: 1;
+  position: absolute;
+}
+
+/* Linha de máscaras (barra de vida) — fix para não deslocar à esquerda quando aumentar */
+.mask-row {
+  display: flex;
+  gap: 6px;
+  position: absolute;
+  top: 25px;
+  left: 40%;        /* mantém a barra a partir de 40% da largura do container */
+  transform: none;   /* --- importante: remove o translate(-50%) que centralizava o grupo --- */
+  transform-origin: left center;
+  z-index: 10;
+}
+
+.life-mask {
+  width: 30px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-drag: none;
+  transition: opacity 140ms ease, transform 140ms ease, box-shadow 180ms ease;
+}
+
+/* efeito azul temporário para máscaras adicionadas */
+.life-mask.blue {
+  box-shadow: 0 0 12px rgba(80,160,255,0.95), 0 0 6px rgba(80,160,255,0.45) inset;
+  transform: translateY(-4px) scale(1.06);
+  animation: bluePulse 900ms ease forwards;
+}
+
+@keyframes bluePulse {
+  0% { transform: translateY(-4px) scale(1.06); opacity: 0.95; }
+  60% { transform: translateY(-2px) scale(1.03); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Checkers na coluna de Status */
+.checker-row {
+  display: flex;
+  gap: 8px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.checker {
+  width: 20px;
+  height: 20px;
+  background: #5e5d5d;
+  clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%);
+  border: 2px solid #9bbcd4;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s, border 0.2s;
+  box-shadow: 0 0 4px rgba(155,188,212,0.5);
+}
+
+.checker.active {
+  background: #9bbcd4;
+  border-color: #fff;
+  box-shadow: 0 0 10px rgba(155,188,212,0.8);
+}
+
+.checker:hover {
+  background: #5f8dbf;
+  box-shadow: 0 0 6px rgba(155,188,212,0.7);
+  border-color: #fff;
+}
+
+.checker-row .checker:nth-child(1) { width: 13px; height: 13px; }
+.checker-row .checker:nth-child(2) { width: 15px; height: 15px; }
+.checker-row .checker:nth-child(3) { width: 18px; height: 18px; }
+
+.status-column h2 {
+  text-align: center;
+  width: 100%;
+  margin: 40px 0 10px 0;
+  color: #9bbcd4;
+  font-size: 18px;
+}
+
+.status-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.status-item input {
+  width: 50px;
+  text-align: center;
+  background: rgba(20, 29, 45, 0.85);
+  border: 1px solid #555;
+  border-radius: 6px;
+  color: #eee;
+  font-size: 13px;
+}
+
+canvas {
+  background: rgba(0,0,0,0.3);
+  border-radius: 10px;
+}
+
+/* Coluna de Skills */
+.skills-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 260px;
+  background: rgba(20, 29, 45, 0.85);
+  padding: 15px;
+  border-radius: 14px;
+  box-shadow: inset 0 0 20px rgba(255,255,255,0.08),
+              0 0 12px rgba(0,0,0,0.8);
+}
+
+.skills-column h2 {
+  color: #9bbcd4;
+  font-size: 18px;
+  margin-bottom: 12px;
+  text-align: center;
+  width: 100%;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 4px;
+  width: 100%;
+}
+
+.skill-slot {
+  width: 80px;
+  height: 80px;
+  background: #080f20;
+  border: 2px solid #1f3251;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;  
+  overflow: hidden;
+  transition: border 0.2s, background 0.2s;
+}
+
+.skill-slot img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  pointer-events: auto; /* liberado para clique */
+}
+
+.skill-slot:hover {
+  background: #091325;
+  border-color: #44667f;
+}
+
+/* Skills aplicadas no notch 7 */
+#notch7 {
+  max-width: 70px;
+  max-height: 70px;
+  object-fit: contain;
+}
+
+/* Shake leve */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  50% { transform: translateX(2px); }
+  75% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+.life-mask.shake {
+  animation: shake 0.3s infinite;
+  z-index: 11; /* garante que fique acima do fundo */
+}
+
+/* Partículas negras */
+.particle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: black;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9; /* abaixo das máscaras */
+  opacity: 1;
+  animation: floatUp 0.9s forwards;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0) scale(1); opacity: 0.8; }
+  100% { transform: translateY(-20px) scale(0.5); opacity: 0; }
+}
+
+/* Coluna de Inventário */
+#colInventario {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 240px;
+  background: rgba(20, 29, 45, 0.85);
+  padding: 15px;
+  border-radius: 14px;
+  box-shadow: inset 0 0 20px rgba(255,255,255,0.08),
+              0 0 12px rgba(0,0,0,0.8);
+}
+
+#colInventario h2 {
+  color: #9bbcd4;
+  font-size: 18px;
+  margin-bottom: 12px;
+  text-align: center;
+  width: 100%;
+}
+
+/* Cabeçalho de categoria */
+.inventario-categoria {
+  margin: 5px 0 6px 0;
+  text-align: center;
+}
+
+.inventario-categoria img {
+  max-width: 30%;
+  height: auto;
+  filter: drop-shadow(0 0 4px rgba(0,0,0,0.7));
+}
+
+/* Grid de slots */
+.grid-inventario {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 3px;
+  margin-bottom: 1px;
+}
+
+.slot {
+  width: 65px;
+  height: 65px;
+  background: #080f20;
+  border: 2px solid #1f3251;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border 0.2s, background 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.slot img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.slot:hover {
+  background: #091325;
+  border-color: #44667f;
+}
+
+/* Agrupador central (atributos + crest + traços) */
+.status-crest-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Linha horizontal (atributos + crest lado a lado) */
+.row-columns {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+/* Área de Traços */
+.tracos-area {
+  width: 100%;
+  background: rgba(20, 29, 45, 0.85);
+  padding: 15px;
+  border-radius: 14px;
+  box-shadow: inset 0 0 20px rgba(255,255,255,0.08),
+              0 0 12px rgba(0,0,0,0.8);
+}
+
+.tracos-area h2 {
+  color: #9bbcd4;
+  font-size: 18px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.tracos-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.traco-slot {
+  background: #080f20;
+  border: 2px solid #1f3251;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border 0.2s, background 0.2s;
+}
+
+.traco-slot:hover {
+  background: #091325;
+  border-color: #44667f;
+}

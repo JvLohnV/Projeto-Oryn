@@ -1,0 +1,385 @@
+html, body { margin:0; padding:0; overflow:hidden; background:#111; font-family:sans-serif; }
+canvas { display:block; }
+
+/* barra inferior */
+#bottomBar {
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  background: rgba(23, 23, 23, 0.9);
+  border-radius:14px 14px 0 0;
+  padding:8px 15px;
+  display:flex;
+  gap:20px;
+  align-items:center;
+  z-index:10;
+}
+#bottomBar button {
+  background: rgba(23, 23, 23, 0.9);
+  border: none;
+  color: #000000ff;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+#bottomBar button:hover {
+  background: #323232ff;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+}
+#bottomBar img {
+  width:32px;
+  height:32px;
+  cursor:pointer;
+  opacity:0.8;
+  transition:opacity 0.2s, transform 0.2s;
+}
+.separator { width:2px; height:28px; background:#444; margin:0 8px; }
+#addButton {
+  font-size:26px; color:#fff; cursor:pointer;
+  padding:4px 10px; border-radius:8px; transition:background 0.2s;
+}
+#addButton:hover { background:#333; }
+
+/* submenu expandível */
+#submenu {
+  position:fixed; bottom:60px; left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:#1c1c1c; border-radius:12px; padding:12px;
+  display:flex; gap:10px; opacity:0; pointer-events:none;
+  transition:all 0.3s ease; z-index:9;
+}
+#submenu.open {
+  opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto;
+}
+#submenu img {
+  width:40px; height:40px; background:#333; border-radius:8px;
+  padding:6px; cursor:pointer; transition:transform 0.2s;
+}
+#submenu img:hover { transform:scale(1.1); }
+
+/* modal overlay */
+#modalOverlay {
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:rgba(0, 0, 0, 1);
+  display:none; justify-content:center; align-items:center; z-index:20;
+}
+
+/* modal principal */
+#modalNew {
+  background:rgba(44, 44, 44, 1); border-radius:12px; width:900px; height:600px;
+  display:flex; flex-direction:column; overflow:hidden;
+  box-shadow:0 0 20px rgba(0,0,0,0.8); animation:pop 0.3s ease;
+}
+#modalNew header {
+  background:rgba(34, 34, 34, 1); padding:12px 16px; display:flex;
+  justify-content:space-between; align-items:center; border-bottom:1px solid #444;
+}
+#modalNew header h2 { margin:0; font-size:18px; color:#fff; }
+#modalNew header .actions { display:flex; gap:10px; align-items:center; }
+#modalNew header button {
+  background:none; border:none; color:#aaa; font-size:20px; cursor:pointer;
+}
+#modalNew header .add {
+  background:rgba(34, 34, 34, 1); border:none; color:#fff;
+  padding:6px 12px; border-radius:6px; font-weight:600; cursor:pointer;
+  transition:background 0.2s; font-size:14px;
+}
+#modalNew header .add:hover { background:#6a3deb; }
+
+.tabs { display:flex; background:#444; border-bottom:1px solid #333; }
+.tabs button {
+  flex:1; padding:10px; background:none; border:none; color:#bbb;
+  cursor:pointer; font-weight:600;
+}
+.tabs button.active { background:#444; color:#fff; }
+
+.assetsGrid {
+  flex:1;
+  padding:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(120px, 1fr));
+  gap:15px;
+  overflow:auto;
+}
+
+/* cada asset é um card quadrado */
+.asset {
+  width:120px;
+  height:120px;
+  background:rgba(55, 55, 55, 1);
+  border-radius:12px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  transition:background 0.2s, transform 0.2s;
+}
+.asset:hover {
+  background:#3a3a4d;
+  transform:scale(1.05);
+}
+
+/* imagem dentro do card */
+.asset img {
+  max-width:90%;
+  max-height:90%;
+  object-fit:contain;
+  display:block;
+}
+
+/* escondemos o span (não precisamos do base64) */
+.asset span { display:none; }
+
+/* modal ADD */
+#modalAdd {
+  background:#1e1e2f; border-radius:12px; width:1000px; height:650px;
+  display:none; flex-direction:column; overflow:hidden;
+  box-shadow:0 0 20px rgba(0,0,0,0.8); animation:pop 0.3s ease; color:#fff;
+}
+.modalAddHeader {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 16px; background:#444; border-bottom:1px solid #212121ff;
+}
+.modalAddHeader .tabsAdd { display:flex; gap:10px; }
+.modalAddHeader .tabsAdd button {
+  background:none; border:none; color:#444; padding:6px 12px;
+  cursor:pointer; font-weight:600; border-bottom:2px solid #252525ff;
+}
+.modalAddHeader h2 { flex:1; text-align:center; margin:0; font-size:18px; }
+.modalAddHeader #closeAddBtn {
+  background:none; border:none; color:#aaa; font-size:20px; cursor:pointer;
+}
+.modalAddBody { flex:1; display:flex; }
+.uploadArea { flex:2; display:flex; justify-content:center; align-items:center; }
+.uploadBox {
+  border:2px dashed #555; border-radius:8px; padding:40px;
+  text-align:center; color:#ccc;
+}
+.uploadBox a { color:#444; text-decoration:none; cursor:pointer; }
+.uploadPreview { max-width:100%; max-height:300px; display:block; margin:10px auto 0; }
+.sidebar {
+  flex:1; background:#242436; padding:20px;
+  display:flex; flex-direction:column; gap:15px;
+}
+.sidebar h3 { margin:0 0 5px 0; font-size:14px; color:#bbb; }
+.field label { display:block; margin-bottom:4px; font-size:13px; color:#aaa; }
+.field input, .field select {
+  width:100%; padding:6px; border-radius:6px; border:none;
+  background:#2b2b3c; color:#fff;
+}
+.toggle { display:flex; gap:5px; }
+.toggle button {
+  flex:1; padding:6px; border:none; border-radius:6px;
+  background:#333; color:#fff; cursor:pointer;
+}
+.toggle button.active { background:#7c4dff; }
+.importBtn {
+  margin-top:auto; background:#7c4dff; border:none; color:#fff;
+  padding:10px; border-radius:6px; font-weight:600; cursor:pointer;
+  transition:background 0.2s;
+}
+.importBtn:hover { background:#6a3deb; }
+
+@keyframes pop { from {transform:scale(0.8); opacity:0;} to {transform:scale(1); opacity:1;} }
+
+/* Botão para abrir/fechar menu */
+#rightMenuToggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #2b2b2bff;
+  color: #000000ff;
+  font-size: 20px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 15;
+  transition: background 0.2s;
+}
+#rightMenuToggle:hover { background: #444; }
+
+/* Menu lateral direito */
+#rightMenu {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  background: rgba(23, 23, 23, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  opacity: 0;
+  transform: translateX(120%);
+  transition: all 0.3s ease;
+  z-index: 14;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+}
+#rightMenu.open {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Botões do menu lateral */
+#rightMenu button {
+  background: rgba(23, 23, 23, 0.9);
+  border: none;
+  color: #000000ff;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+#rightMenu button:hover {
+  background: #323232ff;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+}
+
+/* Ícones SVG dentro dos botões */
+#rightMenu svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.2;
+}
+
+/* Tooltip dos botões */
+#rightMenu button::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  right: 110%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #000;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+#rightMenu button:hover::after {
+  opacity: 1;
+}
+
+#rightMenu button.active {
+  background: #7c4dff;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(124, 77, 255, 0.7);
+}
+
+/* menu flutuante de desenho */
+#drawMenu {
+  position: fixed;
+  background: #1e1e2f;
+  padding: 14px;
+  border-radius: 10px;
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 30;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+  animation: pop 0.2s ease;
+}
+
+#drawMenu .field label {
+  display: block;
+  font-size: 13px;
+  color: #bbb;
+  margin-bottom: 6px;
+}
+
+#drawMenu input[type="range"] {
+  width: 150px;
+  accent-color: #7c4dff;
+}
+
+#drawMenu input[type="color"] {
+  -webkit-appearance: none;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: none;
+  padding: 0;
+}
+
+#drawMenu input[type="color"]::-webkit-color-swatch {
+  border-radius: 6px;
+  border: none;
+}
+
+#drawMenu input[type="color"]::-moz-color-swatch {
+  border-radius: 6px;
+  border: none;
+}
+
+#drawColorInput {
+  width: 120px;
+  height: 120px;
+  margin-top: 5px;
+}
+
+#fogMenu button {
+  background: #2b2b3c;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+#fogMenu button:hover {
+  background: #444;
+}
+
+#fogMenu button.active {
+  background: #7c4dff;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(124, 77, 255, 0.7);
+}
+
+#fogMenu svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.2;
+  color: #fff;
+}
+
+.mini-janela {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 400px;
+  height: 300px;
+  border: 2px solid #666;
+  border-radius: 8px;
+  overflow: auto;
+  background: #000;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(0,0,0,0.8);
+  z-index: 1000;
+  padding: 10px;
+}

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Ficha - Vida e Alma</title>
+  <link rel="stylesheet" href="Ficha.css">
+  <style>
+    /* Hover para imagens móveis */
+    .movableItem {
+      transition: transform 0.2s ease;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .movableItem:hover {
+      transform: scale(1.1);
+    }
+
+    /* Centralizar itens dentro dos slots */
+    .slot {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .slot img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Coluna Inventário -->
+  <div id="colInventario">
+    <h2>Inventário</h2>
+
+    <!-- Categoria: Secundária -->
+    <div class="inventario-categoria">
+      <img src="SecWeap.png" alt="Secundária">
+    </div>
+    <div class="grid-inventario" data-cat="swp">
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+    </div>
+
+    <!-- Categoria: Equipamentos -->
+    <div class="inventario-categoria">
+      <img src="Equip.png" alt="Equipamento">
+    </div>
+    <div class="grid-inventario" data-cat="eqp">
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+    </div>
+
+    <!-- Categoria: Acessórios -->
+    <div class="inventario-categoria">
+      <img src="Acessório.png" alt="Acessório">
+    </div>
+    <div class="grid-inventario" data-cat="acc">
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+    </div>
+
+    <!-- Categoria: Outros -->
+    <div class="inventario-categoria">
+      <img src="notch.Png" alt="Outros">
+    </div>
+    <div class="grid-inventario" data-cat="oth">
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+    </div>
+  </div>
+
+  <!-- Coluna Skills -->
+  <div id="colSkills">
+    <h2>Skills</h2>
+    <div class="grid-inventario">
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+    </div>
+  </div>
+
+  <!-- Dream Catcher Crest -->
+  <img src="Dream_Catcher_Crest.png" alt="Dream Catcher Crest" id="dreamCatcherCrest">
+
+  <!-- Itens ao redor do Crest -->
+  <img src="Acessório.png" alt="Acessório" class="movableItem crest" data-cat="acc"
+       style="position:absolute; left:265px; top:415px; max-width:88px; max-height:88px; z-index:59;">
+  <img src="notch.png" alt="notch" class="movableItem crest" data-cat="oth"
+       style="position:absolute; left:225px; top:270px; max-width:48px; max-height:48px; z-index:59;">
+  <img src="notch.png" alt="notch" class="movableItem crest" data-cat="oth"
+       style="position:absolute; left:500px; top:270px; max-width:48px; max-height:48px; z-index:59;">
+  <img src="notch.png" alt="notch" class="movableItem crest" data-cat="oth"
+       style="position:absolute; left:360px; top:500px; max-width:48px; max-height:48px; z-index:59;">
+  <img src="SecWeap.png" alt="Secundária" class="movableItem crest" data-cat="swp"
+       style="position:absolute; left:350px; top:115px; max-width:88px; max-height:88px; z-index:59;">
+  <img src="Equip.png" alt="Equipamento" class="movableItem crest" data-cat="eqp"
+       style="position:absolute; left:425px; top:415px; max-width:88px; max-height:88px; z-index:60;">
+
+  <!-- Vida e Alma -->
+  <div id="colVidaAlma">
+    <div id="vidaContainer">
+      <img src="Steel_Soul.png" id="vidaFundo" alt="Fundo Vida">
+      <img src="Mask Full.png" class="vidaBolinha" data-estado="full" data-index="0">
+      <img src="Mask Full.png" class="vidaBolinha" data-estado="full" data-index="1">
+      <img src="Mask Full.png" class="vidaBolinha" data-estado="full" data-index="2">
+      <img src="Mask Full.png" class="vidaBolinha" data-estado="full" data-index="3">
+      <img src="Mask Full.png" class="vidaBolinha" data-estado="full" data-index="4">
+    </div>
+
+    <div id="almaContainer">
+      <div id="almaInterior"></div>
+    </div>
+  </div>
+
+  <!-- Coluna de Tamanho -->
+  <div id="colTamanho">
+    <h3>Tamanho</h3>
+    <div class="checker-group">
+      <div class="checker selected" data-tamanho="pequeno" style="width:18px;height:18px;"></div>
+      <div class="checker" data-tamanho="medio" style="width:20px;height:20px;"></div>
+      <div class="checker" data-tamanho="grande" style="width:22px;height:22px;"></div>
+    </div>
+  </div>
+
+  <!-- Coluna Atributos -->
+  <div id="colAtributos">
+    <h2>Atributos</h2>
+    <button id="editarAtributos" title="Editar atributos"></button>
+    <div class="atributo"><span>Força</span> <input type="text" value="0" disabled></div>
+    <div class="atributo"><span>Graça</span> <input type="text" value="0" disabled></div>
+    <div class="atributo"><span>Casca</span> <input type="text" value="0" disabled></div>
+    <div class="atributo"><span>Saber</span> <input type="text" value="0" disabled></div>
+  </div>
+
+  <!-- Botões de fundo hexagonais -->
+  <div id="fundos">
+    <button id="btnGrimm" data-bg="Theme Grimm.png" data-col="rgba(150,0,0,0.6)" data-input="rgba(120,40,40,0.85)" data-text="#000" title="Grimm"></button>
+    <button id="btnSoul" data-bg="Theme Soul.png" data-col="rgba(200,200,200,0.6)" data-input="rgba(230,230,230,0.85)" data-text="#000" title="Soul"></button>
+    <button id="btnVoid" data-bg="Theme Void.png" data-col="rgba(50,50,50,0.6)" data-input="rgba(80,80,80,0.85)" data-text="#fff" title="Void"></button>
+    <button id="btnLifeblood" data-bg="Theme Lifeblood.png" data-col="rgba(0,100,200,0.6)" data-input="rgba(150,200,255,0.85)" data-text="#fff" title="Lifeblood"></button>
+  </div>
+
+  <!-- Scripts -->
+  <script src="equipar.js" defer></script>
+  <script src="Ficha.js" defer></script>
+</body>
+</html>

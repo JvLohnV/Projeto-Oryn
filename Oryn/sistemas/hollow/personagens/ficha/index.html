@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Radar Chart - Hollow Style</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Container flex externo, para colunas lado a lado -->
+  <div class="column-wrapper">
+
+    <!-- Agrupamento: Status + Crest + Traços -->
+    <div class="status-crest-wrapper">
+      
+      <!-- Linha com Status + Crest lado a lado -->
+      <div class="row-columns">
+        <!-- Coluna Status + Radar -->
+        <div class="column">
+          <!-- botão hexagonal acima da vida -->
+          <button id="addMaskBtn" class="hex-button" title="Adicionar máscara azul">+</button>
+
+          <div class="mask-row" id="maskRow"></div>
+          <img src="Steel_Soul.png" alt="Vida" class="life-png" id="lifeImage">
+
+          <div class="status-column">
+            <div class="checker-row">
+              <div class="checker" data-size="small"></div>
+              <div class="checker" data-size="medium"></div>
+              <div class="checker" data-size="large"></div>
+            </div>
+
+            <h2>Atributos</h2>
+            <div class="status-list">
+              <div class="status-item"><span>Força</span><input type="number" value="3" min="0" max="10"></div>
+              <div class="status-item"><span>Graça</span><input type="number" value="5" min="0" max="10"></div>
+              <div class="status-item"><span>Casca</span><input type="number" value="2" min="0" max="10"></div>
+              <div class="status-item"><span>Saber</span><input type="number" value="7" min="0" max="10"></div>
+            </div>
+            <canvas id="statusChart" width="220" height="220"></canvas>
+          </div>
+        </div>
+
+        <!-- Coluna Dream Catcher com notches -->
+        <div class="crest-column">
+          <div class="crest-wrapper">
+            <img src="Dream_Catcher_Crest.png" alt="Dream Catcher" class="dream-crest">
+
+            <!-- 6 notches ao redor -->
+            <img src="notch.png" class="notch notch1">
+            <img src="notch.png" class="notch notch2">
+            <img src="notch.png" class="notch notch3">
+            <img src="notch.png" class="notch notch4">
+            <img src="notch.png" class="notch notch5">
+            <img src="notch.png" class="notch notch6">
+
+            <!-- Notch7 com ID -->
+            <img src="notch.png" class="notch notch7" id="notch7">
+          </div>
+        </div>
+      </div> <!-- fecha row-columns -->
+
+      <!-- Nova área de Traços -->
+      <div class="tracos-area">
+        <h2>Traços</h2>
+        <div class="tracos-list">
+          <div class="traco-slot">Coragem</div>
+          <div class="traco-slot">Persistência</div>
+          <div class="traco-slot">Curiosidade</div>
+        </div>
+      </div>
+
+    </div> <!-- fecha status-crest-wrapper -->
+
+    <!-- Coluna Skills -->
+    <div class="skills-column">
+      <h2>Skills</h2>
+      <div class="skills-grid">
+        <div class="skill-slot"><img src="dash.png" alt="Crucificação de tisma"></div>
+        <div class="skill-slot"><img src="walljump.png" alt=""></div>
+        <div class="skill-slot"><img src="doublejump.png" alt=""></div>
+        <div class="skill-slot"><img src="dive.png" alt=""></div>
+        <div class="skill-slot"><img src="fireball.png" alt=""></div>
+        <div class="skill-slot"><img src="quake.png" alt=""></div>
+        <div class="skill-slot"><img src="howlingwraiths.png" alt=""></div>
+        <div class="skill-slot"><img src="shadesoul.png" alt=""></div>
+        <div class="skill-slot"><img src="cycloneslash.png" alt=""></div>
+        <div class="skill-slot"><img src="dashmaster.png" alt=""></div>
+        <div class="skill-slot"><img src="dreamnail.png" alt=""></div>
+        <div class="skill-slot"><img src="awokendreamnail.png" alt=""></div>
+      </div>
+    </div>
+
+    <!-- Coluna Inventário -->
+    <div id="colInventario">
+      <h2>Inventário</h2>
+
+      <!-- Categoria: Secundária -->
+      <div class="inventario-categoria">
+        <img src="swp.png" alt="Secundária">
+      </div>
+      <div class="grid-inventario" data-cat="swp">
+        <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+        <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+        <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      </div>
+
+      <!-- Categoria: Equipamentos -->
+      <div class="inventario-categoria">
+        <img src="eqp.png" alt="Equipamento">
+      </div>
+      <div class="grid-inventario" data-cat="eqp">
+        <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+        <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+        <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      </div>
+
+      <!-- Categoria: Acessórios -->
+      <div class="inventario-categoria">
+        <img src="acc.png" alt="Acessório">
+      </div>
+      <div class="grid-inventario" data-cat="acc">
+        <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+        <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+        <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      </div>
+
+      <!-- Categoria: Outros -->
+      <div class="inventario-categoria">
+        <img src="notch.png" alt="Outros">
+      </div>
+      <div class="grid-inventario" data-cat="oth">
+        <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+        <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+        <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      </div>
+    </div>
+
+  </div> <!-- fecha column-wrapper -->
+
+  <script src="script.js"></script>
+</body>
+</html>

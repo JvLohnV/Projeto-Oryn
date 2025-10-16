@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Tabuleiro 3x3 com Turnos e Captura</title>
+<style>
+  :root { --card-w:100px; --card-h:140px; --card-radius:12px; }
+
+  body {
+    margin: 0;
+    font-family: 'Cinzel', serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-image: url('void.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  #enemy-cards, #player-cards {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+  }
+
+  #board {
+    display: grid;
+    grid-template-columns: repeat(3, 120px);
+    grid-template-rows: repeat(3, 160px);
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.3);
+  }
+
+  .cell {
+    width: 120px;
+    height: 160px;
+    border-radius: 8px;
+    border: 2px solid rgba(255,255,255,0.06);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    box-sizing: border-box;
+  }
+  .cell.hoverable:hover { transform: scale(1.03); box-shadow: 0 0 10px rgba(255,255,255,0.03); }
+
+  .card {
+    width: var(--card-w);
+    height: var(--card-h);
+    border-radius: var(--card-radius);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: grab;
+    overflow: hidden;
+    background-size: cover;       /* impede repetição */
+    background-position: center;
+    background-repeat: no-repeat; /* impede repetição */
+    box-sizing: border-box;
+    border: 4px solid rgba(0,0,0,0.55); /* borda sutil que respeita border-radius */
+  }
+
+  /* leve overlay para contraste da arte com os números */
+  .card::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.12), rgba(0,0,0,0.28));
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* números e nome ficam por cima */
+  .number, .card-name {
+    position: absolute;
+    color: #a8b510ff;
+    text-shadow: 4px 4px 6px #000;
+    z-index: 2;
+    pointer-events: none;
+    font-family: "Cinzel", serif;
+  }
+
+  .top { top: 6px; left: 25%; transform: translateX(-50%); font-size: 18px; }
+  .bottom { top: 18px; left: 25%; transform: translateX(-50%); font-size: 18px; }
+  .left { top: 12px; left: 15%; transform: translateX(-50%); font-size: 18px; }
+  .right { top: 12px; left: 35%; transform: translateX(-50%); font-size: 18px; }
+
+  .card-name {
+    bottom: 6px;
+    left: 75%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-size: 12px;
+    z-index: 2;
+    text-shadow: 2px 2px 5px #000;
+  }
+
+  .player { border-color: rgba(23,96,198,0.12); }
+  .enemy { border-color: rgba(134,18,18,0.12); }
+
+  #turn-indicator {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  #game-over {
+    display: none;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); color: white; font-size: 36px;
+    justify-content: center; align-items: center;
+    z-index: 1000; flex-direction: column;
+  }
+  #game-over button { margin-top:20px; padding:10px 20px; font-size:18px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<div id="turn-indicator">Turno do Jogador</div>
+
+<div id="enemy-cards"></div>
+
+<div id="board">
+  <div class="cell hoverable" data-x="0" data-y="0"></div>
+  <div class="cell hoverable" data-x="1" data-y="0"></div>
+  <div class="cell hoverable" data-x="2" data-y="0"></div>
+  <div class="cell hoverable" data-x="0" data-y="1"></div>
+  <div class="cell hoverable" data-x="1" data-y="1"></div>
+  <div class="cell hoverable" data-x="2" data-y="1"></div>
+  <div class="cell hoverable" data-x="0" data-y="2"></div>
+  <div class="cell hoverable" data-x="1" data-y="2"></div>
+  <div class="cell hoverable" data-x="2" data-y="2"></div>
+</div>
+
+<div id="player-cards"></div>
+
+<div id="game-over">
+  <div id="game-over-msg"></div>
+  <button onclick="location.reload()">Reiniciar</button>
+</div>
+
+<script>
+// Elementos
+const enemyDiv = document.getElementById('enemy-cards');
+const playerDiv = document.getElementById('player-cards');
+const cells = document.querySelectorAll('#board .cell');
+const turnIndicator = document.getElementById('turn-indicator');
+let savedCards = [];
+
+// shuffle
+function shuffle(array){
+  for(let i=array.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [array[i],array[j]]=[array[j],array[i]];
+  }
+  return array;
+}
+
+// carregar JSON de cartas
+fetch('Cards.json')
+  .then(res=>res.json())
+  .then(data=>{
+    savedCards = data;
+    distribuirCartas();
+  })
+  .catch(err=>{
+    console.error("Erro ao carregar cartas JSON:", err);
+    alert("Não foi possível carregar o arquivo cards.json");
+  });
+
+// turno
+let turno='jogador';
+function alternarTurno(){
+  turno = turno==='jogador' ? 'inimigo' : 'jogador';
+  turnIndicator.textContent = turno==='jogador' ? 'Turno do Jogador' : 'Turno do Inimigo';
+  if(turno==='inimigo') setTimeout(jogadaInimigo, 500);
+}
+
+// cria elemento visual da carta (sem <img>!)
+function createCardElement(card, type){
+  const div = document.createElement('div');
+  div.classList.add('card', type);
+  div.dataset.owner = type;
+  div.dataset.cardId = card.name;
+  div.setAttribute('draggable','true');
+
+  // se for jogador, já mostra a arte como background na mão
+  if(type === 'player'){
+    if(card.image){
+      div.style.backgroundImage = `url(${card.image})`;
+      div.style.backgroundSize = 'cover';
+      div.style.backgroundRepeat = 'no-repeat';
+      div.style.backgroundPosition = 'center';
+    }
+    ['top','right','bottom','left'].forEach(side=>{
+      const n = document.createElement('div');
+      n.classList.add('number', side);
+      n.textContent = card[side];
+      div.appendChild(n);
+    });
+    const nameDiv = document.createElement('div');
+    nameDiv.classList.add('card-name');
+    nameDiv.textContent = card.name;
+    div.appendChild(nameDiv);
+  } else {
+    // inimigo na mão mostra o verso (?)
+    const backDiv = document.createElement('div');
+    backDiv.textContent = "?";
+    backDiv.style.fontSize = "28px";
+    backDiv.style.fontWeight = "700";
+    backDiv.style.color = "#fff";
+    backDiv.style.zIndex = "3";
+    div.appendChild(backDiv);
+  }
+
+  div.addEventListener('dragstart', e=>{
+    if(type === 'enemy' || (type === 'player' && turno !== 'jogador')) { e.preventDefault(); return; }
+    e.dataTransfer.setData('text/plain', card.name);
+    setTimeout(()=>div.style.display='none', 0);
+  });
+  div.addEventListener('dragend', ()=>div.style.display='flex');
+
+  return div;
+}
+
+// distribuir cartas nas mãos
+function distribuirCartas(){
+  if(savedCards.length < 10){
+    function randNum(){ return Math.floor(Math.random()*10); }
+    for(let i=savedCards.length+1;i<=10;i++){
+      savedCards.push({name:`Card${i}`, top:randNum(), right:randNum(), bottom:randNum(), left:randNum(), image:""});
+    }
+  }
+
+  savedCards = shuffle(savedCards);
+  const enemyHand = savedCards.slice(0,5);
+  const playerHand = savedCards.slice(5,10);
+
+  enemyDiv.innerHTML = ""; playerDiv.innerHTML = "";
+  enemyHand.forEach(c => enemyDiv.appendChild(createCardElement(c, 'enemy')));
+  playerHand.forEach(c => playerDiv.appendChild(createCardElement(c, 'player')));
+}
+
+// captura
+function getCell(x,y){ return document.querySelector(`#board .cell[data-x='${x}'][data-y='${y}']`); }
+
+function verificarCaptura(cell, card){
+  const x = parseInt(cell.dataset.x), y = parseInt(cell.dataset.y);
+  const sides = ['top','right','bottom','left'], dxdy=[[0,-1],[1,0],[0,1],[-1,0]];
+  dxdy.forEach((d,i)=>{
+    const nx = x + d[0], ny = y + d[1];
+    if(nx<0 || ny<0 || nx>2 || ny>2) return;
+    const adj = getCell(nx,ny);
+    if(adj.children.length>0){
+      const adjCard = adj.children[0];
+      const owner = adjCard.dataset.owner;
+      const numThis = parseInt(card[sides[i]]);
+      const oppSides = ['bottom','left','top','right'];
+      const numAdjElem = adjCard.querySelector(`.${oppSides[i]}`);
+      if(!numAdjElem) return;
+      const numAdj = parseInt(numAdjElem.textContent);
+      if(numThis > numAdj && owner !== card.owner){
+        adjCard.dataset.owner = card.owner;
+        adjCard.classList.remove('enemy','player'); adjCard.classList.add(card.owner);
+      }
+    }
+  });
+}
+
+// drop nas células
+cells.forEach(cell=>{
+  cell.addEventListener('dragover', e=>e.preventDefault());
+  cell.addEventListener('drop', e=>{
+    e.preventDefault();
+    if(cell.children.length !== 0) return;
+
+    const cardId = e.dataTransfer.getData('text/plain');
+    const cardElem = document.querySelector(`[data-card-id='${cardId}']`);
+    if(!cardElem) return;
+    const owner = cardElem.dataset.owner;
+    let cardData = owner === 'player' ? savedCards.slice(5,10).find(c=>c.name===cardId) : savedCards.slice(0,5).find(c=>c.name===cardId);
+    if(!cardData) return;
+
+    // limpa o conteúdo visual anterior (importante para não duplicar)
+    cardElem.innerHTML = "";
+
+    // aplica a arte por background (mesmo para jogador)
+    if(cardData.image){
+      cardElem.style.backgroundImage = `url(${cardData.image})`;
+      cardElem.style.backgroundSize = 'cover';
+      cardElem.style.backgroundRepeat = 'no-repeat';
+      cardElem.style.backgroundPosition = 'center';
+    } else {
+      cardElem.style.backgroundImage = '';
+    }
+
+    // adiciona números e nome por cima
+    ['top','right','bottom','left'].forEach(side=>{
+      const n=document.createElement('div');
+      n.classList.add('number', side);
+      n.textContent = cardData[side];
+      cardElem.appendChild(n);
+    });
+    const nameDiv=document.createElement('div');
+    nameDiv.classList.add('card-name');
+    nameDiv.textContent = cardData.name;
+    cardElem.appendChild(nameDiv);
+
+    // finaliza colocação
+    cell.appendChild(cardElem);
+    cardElem.setAttribute('draggable', 'false');
+    cardElem.style.cursor = 'default';
+
+    const cardNumbers = { top: cardData.top, right: cardData.right, bottom: cardData.bottom, left: cardData.left, owner: owner };
+    verificarCaptura(cell, cardNumbers);
+    verificarFimDeJogo();
+    alternarTurno();
+  });
+});
+
+// auxiliares e IA
+function colocarCarta(cell, cardElem, cardNumbers){
+  cell.appendChild(cardElem);
+  cardElem.setAttribute('draggable','false');
+  cardElem.style.cursor='default';
+  verificarCaptura(cell, cardNumbers);
+  verificarFimDeJogo();
+  alternarTurno();
+}
+
+function jogadaInimigo(){
+  const enemyCards = Array.from(enemyDiv.children).filter(c => c.getAttribute('draggable') === 'true');
+  if(enemyCards.length === 0){ alternarTurno(); return; }
+  const emptyCells = Array.from(cells).filter(c=>c.children.length===0);
+  if(emptyCells.length === 0) return;
+
+  let melhorJogada = null;
+  enemyCards.forEach(cardElem=>{
+    const cardId = cardElem.dataset.cardId;
+    const cardData = savedCards.slice(0,5).find(c=>c.name===cardId);
+    emptyCells.forEach(cell=>{
+      const x=parseInt(cell.dataset.x), y=parseInt(cell.dataset.y);
+      const sides=['top','right','bottom','left'], dxdy=[[0,-1],[1,0],[0,1],[-1,0]];
+      const oppSides=['bottom','left','top','right'];
+      let capturas=0, vantagemTotal=0;
+      dxdy.forEach((d,i)=>{
+        const nx=x+d[0], ny=y+d[1]; if(nx<0||ny<0||nx>2||ny>2) return;
+        const adj=getCell(nx,ny);
+        if(adj.children.length>0){
+          const adjCard=adj.children[0], owner = adjCard.dataset.owner;
+          if(owner !== 'enemy'){
+            const numThis = cardData[sides[i]];
+            const numAdjElem = adjCard.querySelector(`.${oppSides[i]}`);
+            if(!numAdjElem) return;
+            const numAdj = parseInt(numAdjElem.textContent);
+            if(numThis > numAdj){ capturas++; vantagemTotal += (numThis - numAdj); }
+          }
+        }
+      });
+      if(capturas > 0){
+        if(!melhorJogada || capturas > melhorJogada.capturas || (capturas === melhorJogada.capturas && vantagemTotal > melhorJogada.vantagem)){
+          melhorJogada = {cardElem, cardData, cell, capturas, vantagem: vantagemTotal};
+        }
+      }
+    });
+  });
+
+  let cardElem, cardData, cell;
+  if(melhorJogada){ ({cardElem, cardData, cell} = melhorJogada); }
+  else {
+    cardElem = enemyCards[Math.floor(Math.random()*enemyCards.length)];
+    cardData = savedCards.slice(0,5).find(c=>c.name===cardElem.dataset.cardId);
+    cell = emptyCells[Math.floor(Math.random()*emptyCells.length)];
+  }
+
+  // revela: limpa e aplica background + números
+  cardElem.innerHTML = "";
+  if(cardData.image){
+    cardElem.style.backgroundImage = `url(${cardData.image})`;
+    cardElem.style.backgroundSize = 'cover';
+    cardElem.style.backgroundRepeat = 'no-repeat';
+    cardElem.style.backgroundPosition = 'center';
+  } else {
+    cardElem.style.backgroundImage = '';
+  }
+
+  ['top','right','bottom','left'].forEach(side=>{
+    const n=document.createElement('div');
+    n.classList.add('number',side);
+    n.textContent = cardData[side];
+    cardElem.appendChild(n);
+  });
+  const nameDiv=document.createElement('div');
+  nameDiv.classList.add('card-name');
+  nameDiv.textContent = cardData.name;
+  cardElem.appendChild(nameDiv);
+
+  const cardNumbers={ top: cardData.top, right: cardData.right, bottom: cardData.bottom, left: cardData.left, owner: 'enemy' };
+  colocarCarta(cell, cardElem, cardNumbers);
+}
+
+// fim de jogo
+function verificarFimDeJogo(){
+  const allFilled = Array.from(cells).every(c=>c.children.length>0);
+  if(!allFilled) return;
+  let playerCount=0, enemyCount=0;
+  cells.forEach(c=>{
+    const card = c.children[0];
+    if(card.dataset.owner === 'player') playerCount++;
+    else if(card.dataset.owner === 'enemy') enemyCount++;
+  });
+  const msg = document.getElementById('game-over-msg');
+  const gameOverDiv = document.getElementById('game-over');
+  if(playerCount > enemyCount) msg.textContent = `Vitória! ${playerCount} x ${enemyCount}`;
+  else if(playerCount < enemyCount) msg.textContent = `Derrota! ${playerCount} x ${enemyCount}`;
+  else msg.textContent = `Empate! ${playerCount} x ${enemyCount}`;
+  gameOverDiv.style.display = 'flex';
+}
+</script>
+
+</body>
+</html>

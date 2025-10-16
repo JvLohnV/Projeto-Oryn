@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Inventário Interativo</title>
+<style>
+  body { font-family: sans-serif; background: #111; color: #eee; padding: 20px; }
+  #inventario { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+  .item { border: 1px solid #555; padding: 10px; width: 150px; text-align: center; background: #222; border-radius: 5px; }
+  .item img { max-width: 100%; border-radius: 3px; }
+  input, textarea, .dropzone { width: 100%; margin-bottom: 10px; padding: 5px; border-radius: 3px; border: 1px solid #555; background: #222; color: #eee; }
+  button { padding: 5px 10px; background: #444; color: #eee; border: none; border-radius: 3px; cursor: pointer; }
+  button:hover { background: #666; }
+  .dropzone { border: 2px dashed #555; text-align: center; padding: 20px; cursor: pointer; }
+  .dropzone.hover { border-color: #888; }
+</style>
+</head>
+<body>
+
+<h1>Inventário Interativo</h1>
+
+<div>
+  <input type="text" id="nomeItem" placeholder="Nome do Item">
+  <textarea id="descricaoItem" placeholder="Descrição do Item"></textarea>
+
+  <div id="dropzone" class="dropzone">
+    Solte a imagem aqui ou clique para selecionar
+    <input type="file" id="arquivoItem" accept="image/*" style="display:none">
+  </div>
+
+  <button id="btnAdicionar">Adicionar Item</button>
+</div>
+
+<div id="inventario"></div>
+
+<script>
+const inventario = document.getElementById('inventario');
+const dropzone = document.getElementById('dropzone');
+const arquivoInput = document.getElementById('arquivoItem');
+const btnAdicionar = document.getElementById('btnAdicionar');
+let arquivoSelecionado = null;
+
+// Arrastar e soltar
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('hover'); });
+dropzone.addEventListener('dragleave', e => { e.preventDefault(); dropzone.classList.remove('hover'); });
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropzone.classList.remove('hover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    arquivoSelecionado = file;
+    dropzone.textContent = file.name;
+  } else {
+    alert('Selecione apenas imagens!');
+  }
+});
+
+// Clique para selecionar
+dropzone.addEventListener('click', () => arquivoInput.click());
+arquivoInput.addEventListener('change', () => {
+  const file = arquivoInput.files[0];
+  if (file && file.type.startsWith('image/')) {
+    arquivoSelecionado = file;
+    dropzone.textContent = file.name;
+  } else {
+    alert('Selecione apenas imagens!');
+  }
+});
+
+// Função para renderizar um item no inventário
+function renderItem(item) {
+  const divItem = document.createElement('div');
+  divItem.className = 'item';
+  divItem.dataset.id = item.id; // salva id único
+  divItem.innerHTML = `
+    <img src="${item.imagem}" alt="${item.nome}">
+    <h3>${item.nome}</h3>
+    <p>${item.descricao}</p>
+    <button onclick="removerItem('${item.id}')">Remover</button>
+  `;
+  inventario.appendChild(divItem);
+}
+
+// Função para remover item
+function removerItem(id) {
+  let itensSalvos = JSON.parse(localStorage.getItem('inventario') || '[]');
+  itensSalvos = itensSalvos.filter(i => i.id !== id);
+  localStorage.setItem('inventario', JSON.stringify(itensSalvos));
+
+  const divItem = document.querySelector(`.item[data-id="${id}"]`);
+  if (divItem) inventario.removeChild(divItem);
+}
+
+// Carrega itens salvos no LocalStorage ao abrir a página
+window.addEventListener('load', () => {
+  const itensSalvos = JSON.parse(localStorage.getItem('inventario') || '[]');
+  itensSalvos.forEach(item => renderItem(item));
+});
+
+// Adicionar item com base64
+btnAdicionar.addEventListener('click', () => {
+  const nome = document.getElementById('nomeItem').value.trim();
+  const descricao = document.getElementById('descricaoItem').value.trim();
+
+  if (!nome || !arquivoSelecionado) {
+    alert('Nome e imagem são obrigatórios!');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const base64Imagem = e.target.result;
+
+    const novoItem = { 
+      id: crypto.randomUUID(), // ID único
+      nome, 
+      descricao, 
+      imagem: base64Imagem 
+    };
+    
+    // Salvar no LocalStorage
+    const itensAtuais = JSON.parse(localStorage.getItem('inventario') || '[]');
+    itensAtuais.push(novoItem);
+    localStorage.setItem('inventario', JSON.stringify(itensAtuais));
+
+    // Renderiza na página
+    renderItem(novoItem);
+
+    // Limpa campos
+    document.getElementById('nomeItem').value = '';
+    document.getElementById('descricaoItem').value = '';
+    arquivoInput.value = '';
+    arquivoSelecionado = null;
+    dropzone.textContent = 'Solte a imagem aqui ou clique para selecionar';
+  };
+  reader.readAsDataURL(arquivoSelecionado);
+});
+</script>
+
+</body>
+</html>

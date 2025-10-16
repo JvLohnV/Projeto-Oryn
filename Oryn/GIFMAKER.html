@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Criador de GIF Transparente</title>
+  <style>
+    body {
+      background: #222;
+      color: #eee;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    #preview {
+      margin: 20px auto;
+      display: block;
+      border: 2px solid #555;
+      background: transparent;
+      max-width: 100%;
+    }
+    input, button {
+      margin: 10px;
+      padding: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Criador de GIF</h1>
+  <input type="file" id="input" multiple accept="image/*"><br>
+  Largura: <input type="number" id="width" value="300">
+  Altura: <input type="number" id="height" value="300"><br>
+  <button id="gerar">Gerar GIF</button>
+  <button id="baixar" disabled>Baixar GIF</button>
+  <br>
+  <img id="preview" alt="Preview do GIF" />
+
+  <!-- gif.js + worker -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js"></script>
+
+  <script>
+    const input = document.getElementById('input');
+    const gerar = document.getElementById('gerar');
+    const baixar = document.getElementById('baixar');
+    const preview = document.getElementById('preview');
+    const widthInput = document.getElementById('width');
+    const heightInput = document.getElementById('height');
+
+    let gifBlob = null;
+
+    gerar.addEventListener('click', () => {
+      const files = input.files;
+      if (!files.length) {
+        alert("Selecione imagens primeiro!");
+        return;
+      }
+
+      const gif = new GIF({
+        workers: 2,
+        quality: 10,
+        width: parseInt(widthInput.value),
+        height: parseInt(heightInput.value),
+        transparent: 0x00FF00 // cor chave usada como transparente
+      });
+
+      let loaded = 0;
+      for (let i = 0; i < files.length; i++) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = new Image();
+          img.src = e.target.result;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = parseInt(widthInput.value);
+            canvas.height = parseInt(heightInput.value);
+            const ctx = canvas.getContext('2d');
+
+            // limpa sem pintar fundo → mantém pixels transparentes
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            gif.addFrame(canvas, { delay: 300, dispose: 2 });
+            loaded++;
+            if (loaded === files.length) {
+              gif.on('finished', blob => {
+                gifBlob = blob;
+                const url = URL.createObjectURL(blob);
+                preview.src = url;
+                baixar.disabled = false;
+              });
+              gif.render();
+            }
+          };
+        };
+        reader.readAsDataURL(files[i]);
+      }
+    });
+
+    baixar.addEventListener('click', () => {
+      if (gifBlob) {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(gifBlob);
+        a.download = 'meu_gif_transparente.gif';
+        a.click();
+      }
+    });
+  </script>
+</body>
+</html>
