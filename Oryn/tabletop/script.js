@@ -820,8 +820,8 @@ const params = new URLSearchParams(window.location.search);
 const room = params.get("room") || "default";
 
 // conecta no Supabase
-const supabaseUrl = "https://oxlhrwkbsxepurfzvcdw.supabase.co";   // <-- troque pelo seu
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94bGhyd2tic3hlcHVyZnp2Y2R3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4MDk4NjcsImV4cCI6MjA3NDM4NTg2N30.wzXQ3oAvmp0kGsTzxE86gJoD8GlEPZtWHeWhWFX3VOo";               // <-- troque pelo seu
+const supabaseUrl = "https://ngehsncshjivmnqwxaqu.supabase.co";   // <-- troque pelo seu
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZWhzbmNzaGppdm1ucXd4YXF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1OTM4MzUsImV4cCI6MjA3NjE2OTgzNX0.hTEIKG6-Of5cEfKg1ejohNyWpsnCziD1P72k22AYOso";               // <-- troque pelo seu
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 // garante id único para cada token

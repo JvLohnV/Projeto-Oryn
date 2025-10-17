@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <title>Login - Google</title>
@@ -15,17 +16,20 @@
       height: 100vh;
       margin: 0;
     }
+
     .login-box {
       background: #161b22;
       padding: 30px;
       border-radius: 12px;
       text-align: center;
-      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
       width: 320px;
     }
+
     .login-box h2 {
       margin-bottom: 20px;
     }
+
     button {
       background: #238636;
       border: none;
@@ -37,9 +41,11 @@
       transition: 0.3s;
       width: 100%;
     }
+
     button:hover {
       background: #2ea043;
     }
+
     .error {
       color: #ff5555;
       margin-top: 15px;
@@ -47,6 +53,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="login-box">
     <h2>Login</h2>
@@ -56,14 +63,16 @@
   </div>
 
   <script>
-    // 🔑 Configurações do projeto Supabase
-    const SUPABASE_URL = "https://oxlhrwkbsxepurfzvcdw.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94bGhyd2tic3hlcHVyZnp2Y2R3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4MDk4NjcsImV4cCI6MjA3NDM4NTg2N30.wzXQ3oAvmp0kGsTzxE86gJoD8GlEPZtWHeWhWFX3VOo";
+    const SUPABASE_URL = "https://ngehsncshjivmnqwxaqu.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZWhzbmNzaGppdm1ucXd4YXF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1OTM4MzUsImV4cCI6MjA3NjE2OTgzNX0.hTEIKG6-Of5cEfKg1ejohNyWpsnCziD1P72k22AYOso";
 
     const { createClient } = window.supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Se já estiver logado, manda direto para o dashboard
+    // 🔥 Apaga qualquer sessão antiga do projeto do seu amigo
+    localStorage.removeItem("sb-oxlhrwkbsxepurfzvcdw-auth-token");
+
+    // Se já estiver logado, manda direto pro seu dashboard
     document.addEventListener("DOMContentLoaded", async () => {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
@@ -75,7 +84,7 @@
       const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: "https://jonathandrakeop-lab.github.io/neXus/dashboard.html"
+          redirectTo: "https://jvlohnv.github.io/Projeto-Oryn/Oryn/dashboard.html"
         }
       });
 
@@ -85,4 +94,5 @@
     });
   </script>
 </body>
+
 </html>
