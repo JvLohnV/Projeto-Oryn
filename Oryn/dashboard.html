@@ -4,13 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Oryn Dashboard</title>
-  <!-- Fonte Orbitron -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       font-family: 'Orbitron', sans-serif;
-      /* fonte futurista */
       background: #111;
       color: #eee;
       display: flex;
@@ -34,7 +32,6 @@
       left: 0;
     }
 
-    /* Título (logo) */
     #sidebar .logo {
       text-align: center;
       padding: 20px 10px;
@@ -46,7 +43,6 @@
       height: auto;
     }
 
-    /* Perfil */
     #sidebar .profile {
       text-align: center;
       padding: 20px;
@@ -64,7 +60,6 @@
       margin: 0;
       font-size: 16px;
       color: #fdd835;
-      /* dourado */
     }
 
     #sidebar nav {
@@ -86,7 +81,7 @@
       background: rgba(255, 255, 255, 0.1);
     }
 
-    /* Toggle button */
+    /* Toggle */
     #menu-toggle {
       position: fixed;
       top: 15px;
@@ -102,7 +97,7 @@
       font-family: 'Orbitron', sans-serif;
     }
 
-    /* Main content */
+    /* Main */
     #main {
       margin-left: 0;
       padding: 20px;
@@ -113,13 +108,105 @@
     #sidebar.open~#main {
       margin-left: 250px;
     }
+
+    /* ---------- BOTÃO ADMIN DISCRETO ---------- */
+    #admin-btn {
+      position: fixed;
+      bottom: 10px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      color: #333;
+      opacity: 0.1;
+      font-size: 14px;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+      z-index: 999;
+    }
+
+    #admin-btn:hover {
+      opacity: 0.6;
+      color: #fdd835;
+    }
+
+    /* ---------- POPUP DE SENHA ---------- */
+    #admin-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    #admin-popup.active {
+      display: flex;
+    }
+
+    .popup-content {
+      background: #1a1a1a;
+      border: 1px solid #9a1b1b;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 0 15px #9a1b1b80;
+      text-align: center;
+      width: 300px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .popup-content h2 {
+      margin-bottom: 20px;
+      color: #fdd835;
+      font-size: 18px;
+    }
+
+    .popup-content input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #333;
+      border-radius: 5px;
+      background: #222;
+      color: #eee;
+      margin-bottom: 15px;
+      text-align: center;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .popup-content button {
+      background: #9a1b1b;
+      border: none;
+      padding: 8px 20px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .popup-content button:hover {
+      background: #b71c1c;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
   </style>
 </head>
 
 <body>
   <button id="menu-toggle">☰</button>
 
-  <!-- Sidebar -->
   <div id="sidebar">
     <div class="logo">
       <img src="titulo.png" alt="neXus">
@@ -129,17 +216,28 @@
       <h3 id="user-name">Usuário</h3>
     </div>
     <nav>
-      <a href="Triplice_Tenebrosa/Mesinha.html"> Triple Triad</a>
-      <a href="sistemas/sistemas.html"> Sistemas</a>
-      <a href="tabletop/test.html"> Tabletop</a>
-      <a href="#" id="logout"> Sair</a>
+      <a href="Triplice_Tenebrosa/Mesinha.html">Triple Triad</a>
+      <a href="sistemas/sistemas.html">Sistemas</a>
+      <a href="tabletop/test.html">Tabletop</a>
+      <a href="#" id="logout">Sair</a>
     </nav>
   </div>
 
-  <!-- Main -->
   <div id="main">
     <h1>Bem-vindo ao Oryn</h1>
     <p>Escolha uma das seções no menu lateral para continuar.</p>
+  </div>
+
+  <!-- Botão Admin -->
+  <button id="admin-btn">⚙</button>
+
+  <!-- Popup -->
+  <div id="admin-popup">
+    <div class="popup-content">
+      <h2>Acesso Restrito</h2>
+      <input type="password" id="admin-password" placeholder="Digite a senha">
+      <button id="admin-submit">Entrar</button>
+    </div>
   </div>
 
   <script type="module">
@@ -148,7 +246,7 @@
         localStorage.removeItem(key);
       }
     }
-    
+
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
     const SUPABASE_URL = "https://ngehsncshjivmnqwxaqu.supabase.co";
@@ -163,11 +261,10 @@
     });
 
     async function loadUser() {
-      const { data, error } = await supabase.auth.getSession();
+      const { data } = await supabase.auth.getSession();
       const session = data.session;
 
       if (!session) {
-        // Se não houver sessão, redireciona pro login
         window.location.href = "index.html";
         return;
       }
@@ -179,10 +276,37 @@
 
     loadUser();
 
-    // Botão de logout
     document.getElementById("logout").addEventListener("click", async () => {
       await supabase.auth.signOut();
       window.location.href = "index.html";
+    });
+
+    // ---------- LÓGICA DO BOTÃO ADMIN ----------
+    const adminBtn = document.getElementById("admin-btn");
+    const adminPopup = document.getElementById("admin-popup");
+    const adminSubmit = document.getElementById("admin-submit");
+    const adminPassword = document.getElementById("admin-password");
+
+    adminBtn.addEventListener("click", () => {
+      adminPopup.classList.add("active");
+      adminPassword.focus();
+    });
+
+    adminSubmit.addEventListener("click", () => {
+      const senha = adminPassword.value.trim();
+      if (senha === "OrynMaster2025") { 
+        window.location.href = "dashboard.html";
+      } else {
+        adminPassword.value = "";
+        adminPassword.placeholder = "Senha incorreta";
+      }
+    });
+
+    // Fecha popup clicando fora
+    adminPopup.addEventListener("click", (e) => {
+      if (e.target === adminPopup) {
+        adminPopup.classList.remove("active");
+      }
     });
   </script>
 </body>
