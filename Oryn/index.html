@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <title>Login - Google</title>
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <script src="config.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -69,28 +70,16 @@
     const { createClient } = window.supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // 🔥 Apaga qualquer sessão antiga do projeto do seu amigo
-    localStorage.removeItem("sb-oxlhrwkbsxepurfzvcdw-auth-token");
-
-    // Se já estiver logado, manda direto pro seu dashboard
+    // Se já estiver logado, pula login
     document.addEventListener("DOMContentLoaded", async () => {
       const { data: { session } } = await supabaseClient.auth.getSession();
-      if (session) {
+      if (session && !enableTest) {
         window.location.href = "dashboard.html";
       }
     });
 
-    document.getElementById("googleLogin").addEventListener("click", async () => {
-      const { error } = await supabaseClient.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: "https://jvlohnv.github.io/Projeto-Oryn/Oryn/dashboard.html"
-        }
-      });
-
-      if (error) {
-        document.getElementById("errorMsg").textContent = "Erro: " + error.message;
-      }
+    document.getElementById("googleLogin").addEventListener("click", () => {
+      handleLoginRedirect(supabaseClient);
     });
   </script>
 </body>
