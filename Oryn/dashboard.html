@@ -4,19 +4,17 @@
 <head>
   <meta charset="UTF-8">
   <title>Oryn Dashboard</title>
-  <!-- Fonte Orbitron -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+  <script src="config.js"></script>
   <style>
     body {
       margin: 0;
       font-family: 'Orbitron', sans-serif;
-      /* fonte futurista */
       background: #111;
       color: #eee;
       display: flex;
     }
 
-    /* Sidebar */
     #sidebar {
       position: fixed;
       top: 0;
@@ -34,7 +32,6 @@
       left: 0;
     }
 
-    /* Título (logo) */
     #sidebar .logo {
       text-align: center;
       padding: 20px 10px;
@@ -46,7 +43,6 @@
       height: auto;
     }
 
-    /* Perfil */
     #sidebar .profile {
       text-align: center;
       padding: 20px;
@@ -64,7 +60,6 @@
       margin: 0;
       font-size: 16px;
       color: #fdd835;
-      /* dourado */
     }
 
     #sidebar nav {
@@ -86,7 +81,6 @@
       background: rgba(255, 255, 255, 0.1);
     }
 
-    /* Toggle button */
     #menu-toggle {
       position: fixed;
       top: 15px;
@@ -102,7 +96,6 @@
       font-family: 'Orbitron', sans-serif;
     }
 
-    /* Main content */
     #main {
       margin-left: 0;
       padding: 20px;
@@ -119,7 +112,6 @@
 <body>
   <button id="menu-toggle">☰</button>
 
-  <!-- Sidebar -->
   <div id="sidebar">
     <div class="logo">
       <img src="titulo.png" alt="neXus">
@@ -129,57 +121,40 @@
       <h3 id="user-name">Usuário</h3>
     </div>
     <nav>
-      <a href="Triplice_Tenebrosa/Mesinha.html"> Triple Triad</a>
-      <a href="sistemas/sistemas.html"> Sistemas</a>
-      <a href="tabletop/test.html"> Tabletop</a>
-      <a href="#" id="logout"> Sair</a>
+      <a href="Triplice_Tenebrosa/Mesinha.html">Triple Triad</a>
+      <a href="sistemas/sistemas.html">Sistemas</a>
+      <a href="tabletop/test.html">Tabletop</a>
+      <a href="#" id="logout">Sair</a>
     </nav>
   </div>
 
-  <!-- Main -->
   <div id="main">
-    <h1>Bem-vindo ao Oryn</h1>
+    <h1>Bem-vindo ao TESTE ULTRA MASTER BLASTER</h1>
     <p>Escolha uma das seções no menu lateral para continuar.</p>
   </div>
 
   <script type="module">
-    for (const key in localStorage) {
-      if (key.startsWith("sb-")) {
-        localStorage.removeItem(key);
-      }
-    }
-    
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
     const SUPABASE_URL = "https://ngehsncshjivmnqwxaqu.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZWhzbmNzaGppdm1ucXd4YXF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1OTM4MzUsImV4cCI6MjA3NjE2OTgzNX0.hTEIKG6-Of5cEfKg1ejohNyWpsnCziD1P72k22AYOso";
-
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const toggleBtn = document.getElementById("menu-toggle");
     const sidebar = document.getElementById("sidebar");
-    toggleBtn.addEventListener("click", () => {
-      sidebar.classList.toggle("open");
-    });
+    toggleBtn.addEventListener("click", () => sidebar.classList.toggle("open"));
 
     async function loadUser() {
-      const { data, error } = await supabase.auth.getSession();
-      const session = data.session;
+      const session = await handleDashboardRedirect(supabase);
+      if (!session) return;
 
-      if (!session) {
-        // Se não houver sessão, redireciona pro login
-        window.location.href = "index.html";
-        return;
-      }
-
-      const user = session.user;
+      const user = session.user || { user_metadata: {} };
       document.getElementById("user-name").innerText = user.user_metadata.full_name || "Usuário sem nome";
       document.getElementById("user-avatar").src = user.user_metadata.avatar_url || "https://via.placeholder.com/60";
     }
 
     loadUser();
 
-    // Botão de logout
     document.getElementById("logout").addEventListener("click", async () => {
       await supabase.auth.signOut();
       window.location.href = "index.html";
