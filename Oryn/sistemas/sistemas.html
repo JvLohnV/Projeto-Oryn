@@ -71,7 +71,7 @@
     if (logoutBtn) {
       logoutBtn.addEventListener("click", async () => {
         await supabase.auth.signOut();
-        window.location.href = "/Oryn/index.html";
+        window.location.href = "../index.html";
       });
     }
 
@@ -84,7 +84,7 @@
     }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script type="module" src="/Oryn/scripts/menuConfig.js"></script>
+  <script type="module" src="../scripts/menuConfig.js"></script>
 </body>
 
 </html>
