@@ -38,9 +38,9 @@
       <h3 id="user-name">Usuário</h3>
     </div>
     <nav>
-      <a href="dashboard.html"> Dashboard</a>
-      <a href="sistemas/sistemas.html"> Sistemas</a>
-      <a href="tabletop/test.html"> Tabletop</a>
+      <a href="../dashboard.html"> Dashboard</a>
+      <a href="../sistemas/sistemas.html"> Sistemas</a>
+      <a href="../tabletop/test.html"> Tabletop</a>
       <div href="#" id="logout">Sair</div>
     </nav>
   </div>
@@ -67,30 +67,6 @@
   </div>
 
   <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-    const supabase = createClient(
-      "https://SEU-PROJECT.supabase.co",
-      "SEU-ANON-KEY"
-    );
-
-    const toggleBtn = document.getElementById("menu-toggle");
-    const sidebar = document.getElementById("sidebar");
-    toggleBtn.addEventListener("click", () => {
-      sidebar.classList.toggle("open");
-    });
-
-    /*     async function loadUser() {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
-            document.getElementById("user-name").innerText =
-              user.user_metadata.full_name || "Sem Nome";
-            document.getElementById("user-avatar").src =
-              user.user_metadata.avatar_url || "/Oryn/Estilos/imagens/DefaultUser.png";
-          }
-        }
-        loadUser(); */
-
     const logoutBtn = document.getElementById("logout");
     if (logoutBtn) {
       logoutBtn.addEventListener("click", async () => {
@@ -107,6 +83,7 @@
       });
     }
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module" src="/Oryn/scripts/menuConfig.js"></script>
 </body>
 
