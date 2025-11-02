@@ -1,5 +1,5 @@
 // Variável global para ativar o modo de teste
-const enableTest = false; // 👉 troque para false quando quiser comportamento real
+const enableTest = true; // 👉 troque para false quando quiser comportamento real
 
 /**
  * Função usada no LOGIN (index.html)

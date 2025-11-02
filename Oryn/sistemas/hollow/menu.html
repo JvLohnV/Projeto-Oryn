@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Menu - Oryn</title>
-  <link rel="stylesheet" href="/Oryn/Estilos/particulas/particulas.css">
-  <link rel="stylesheet" href="/Oryn/Estilos/styles/style.css">
+  <link rel="stylesheet" href="./particulas/particulas.css">
+  <link rel="stylesheet" href="../styles/style.css">
   <style>
     /* =============================
        HEADER PRINCIPAL
@@ -157,7 +157,7 @@
   <!-- Cabeçalho -->
   <header>
     <a href="/Oryn/dashboard.html">
-      <img src="/Oryn/Estilos/imagens/2-titulo.png" alt="Logo Oryn" class="logo">
+      <img src="../styles/imagens/2-titulo.png" alt="Logo Oryn" class="logo">
     </a>
   </header>
 
@@ -172,7 +172,7 @@
   <button class="toggle-bg-btn" id="toggleBgBtn">Trocar Fundo</button>
 
   <!-- Script inicial (apenas vagalumes ao carregar) -->
-  <script src="/Oryn/Estilos/particulas/cinzas.js" id="particleScript"></script>
+  <script src="./particulas/cinzas.js" id="particleScript"></script>
 
   <script>
     const btn = document.getElementById('toggleBgBtn');
@@ -202,11 +202,11 @@
 
       if (current === 'cinzas') {
         body.style.background = 'linear-gradient(135deg, #000000, #031d47)';
-        newScript.src = '/Oryn/Estilos/particulas/borboletas.js';
+        newScript.src = './particulas/borboletas.js';
         current = 'borboletas';
       } else {
         body.style.background = 'linear-gradient(135deg, #000000, #ffffff)';
-        newScript.src = '/Oryn/Estilos/particulas/cinzas.js';
+        newScript.src = './particulas/cinzas.js';
         current = 'cinzas';
       }
 
