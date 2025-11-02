@@ -16,9 +16,7 @@ async function handleLoginRedirect(supabaseClient) {
     const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: "google",
         options: {
-            // Usar o origin atual garante que o retorno do OAuth caia no mesmo host
-            // (evita perder a sessão quando se testa localmente ou em outro domínio).
-            redirectTo: window.location.origin + "/dashboard.html",
+            redirectTo: "https://jvlohnv.github.io/Projeto-Oryn/Oryn/dashboard.html",
         },
     });
 
