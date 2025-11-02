@@ -1,64 +1,218 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
-  <title>Menu - neXus</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Menu - Oryn</title>
+  <link rel="stylesheet" href="/Oryn/Estilos/particulas/particulas.css">
+  <link rel="stylesheet" href="/Oryn/Estilos/styles/style.css">
+  <style>
+    /* =============================
+       HEADER PRINCIPAL
+    ============================== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 55px;
+      background: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+    }
+
+    .logo {
+      height: 55px;
+      transition: transform 0.3s;
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
+    }
+
+    /* =============================
+       BOTÃO DE TROCA DE FUNDO
+    ============================== */
+    .toggle-bg-btn {
+      position: fixed;
+      top: 105px;
+      right: 20px;
+      background: #000000;
+      color: #f39c12;
+      border: 1px solid #f39c12;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-family: 'Rubik', sans-serif;
+      font-size: 0.95rem;
+      cursor: pointer;
+      z-index: 1100;
+      box-shadow: 0 0 10px #f39c1233;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-bg-btn:hover {
+      background: #f39c12;
+      color: #000;
+      box-shadow: 0 0 20px #f39c12aa;
+      border: 1px solid #000000;
+      transform: scale(1.05);
+    }
+
+    /* =============================
+       MENU SECUNDÁRIO
+    ============================== */
+    .sub-menu {
+      margin-top: 50px;
+      background: #1b1b1b;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      padding: 3px 15px;
+      border-bottom: 1px solid #00d9ff26;
+      position: sticky;
+      top: 50px;
+      z-index: 900;
+    }
+
+    .sub-menu a {
+      color: #d0d0d0;
+      text-decoration: none;
+      font-family: 'Rubik', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      position: relative;
+      text-align: center;
+      padding: 8px 12px;
+      flex: 1;
+    }
+
+    .sub-menu a::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0%;
+      height: 2px;
+      background: #f39c12;
+      transition: width 0.3s ease;
+    }
+
+    .sub-menu a:hover {
+      color: #f39c12;
+      text-shadow: 0 0 8px #f39c12;
+    }
+
+    .sub-menu a:hover::after {
+      width: 60%;
+    }
+
+    /* =============================
+       CORPO E GERAL
+    ============================== */
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #000000, #ffffff);
+      color: #eee;
+      font-family: 'Rubik', sans-serif;
+      overflow: hidden;
+    }
+
+    /* Ajuste para mobile */
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+      }
+
+      .logo {
+        height: 50px;
+        margin-bottom: 10px;
+      }
+
+      .sub-menu {
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px 0;
+      }
+
+      .sub-menu a {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <!-- Canvas para as partículas -->
+  <!-- Canvas das partículas -->
   <canvas id="bgParticles"></canvas>
 
-  <!-- Header -->
+  <!-- Cabeçalho -->
   <header>
-  <a href="personagens/personagens.html">Personagens</a>
-  <a href="Mapa/mapa.html">Mapa</a>
-  <a href="anotações/anotações.html">Anotações</a>
+    <a href="/Oryn/dashboard.html">
+      <img src="/Oryn/Estilos/imagens/2-titulo.png" alt="Logo Oryn" class="logo">
+    </a>
   </header>
 
+  <!-- Menu secundário -->
+  <nav class="sub-menu">
+    <a href="personagens/personagens.html">Personagens</a>
+    <a href="Mapa/mapa.html">Mapa</a>
+    <a href="anotações/anotações.html">Anotações</a>
+  </nav>
 
-  <!-- Script das partículas -->
+  <!-- Botão de troca -->
+  <button class="toggle-bg-btn" id="toggleBgBtn">Trocar Fundo</button>
+
+  <!-- Script inicial (apenas vagalumes ao carregar) -->
+  <script src="/Oryn/Estilos/particulas/cinzas.js" id="particleScript"></script>
+
   <script>
+    const btn = document.getElementById('toggleBgBtn');
+    const body = document.body;
     const canvas = document.getElementById('bgParticles');
-    const ctx = canvas.getContext('2d');
+    let current = 'cinzas';
+    let animationFrame;
 
-    function resize() {
-      canvas.width = innerWidth;
-      canvas.height = innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    class Particle {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 3 + 1;
-        this.vx = Math.random() * 1 - 0.5;
-        this.vy = Math.random() * 1 - 0.5;
-      }
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-
-        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-      }
-      draw() {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    const particles = Array.from({ length: 100 }, () => new Particle());
-
-    (function animate() {
+    // Função para limpar animação atual
+    function stopAnimation() {
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => { p.update(); p.draw(); });
-      requestAnimationFrame(animate);
-    })();
+    }
+
+    btn.addEventListener('click', () => {
+      // Para a animação atual (se existir)
+      if (window.stopParticles) window.stopParticles();
+
+      // Remove script anterior
+      const oldScript = document.getElementById('particleScript');
+      if (oldScript) oldScript.remove();
+
+      // Cria e adiciona o novo script
+      const newScript = document.createElement('script');
+      newScript.id = 'particleScript';
+
+      if (current === 'cinzas') {
+        body.style.background = 'linear-gradient(135deg, #000000, #031d47)';
+        newScript.src = '/Oryn/Estilos/particulas/borboletas.js';
+        current = 'borboletas';
+      } else {
+        body.style.background = 'linear-gradient(135deg, #000000, #ffffff)';
+        newScript.src = '/Oryn/Estilos/particulas/cinzas.js';
+        current = 'cinzas';
+      }
+
+      document.body.appendChild(newScript);
+    });
   </script>
 </body>
+
 </html>
