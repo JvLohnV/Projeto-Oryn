@@ -1,127 +1,46 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
   <meta charset="UTF-8">
   <title>Oryn Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
-  <script src="config.js"></script>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Orbitron', sans-serif;
-      background: #111;
-      color: #eee;
-      display: flex;
-    }
-
-    #sidebar {
-      position: fixed;
-      top: 0;
-      left: -250px;
-      width: 250px;
-      height: 100%;
-      background: linear-gradient(180deg, #570000, #200000);
-      transition: left 0.3s ease;
-      box-shadow: 3px 0 8px rgba(0, 0, 0, 0.5);
-      display: flex;
-      flex-direction: column;
-    }
-
-    #sidebar.open {
-      left: 0;
-    }
-
-    #sidebar .logo {
-      text-align: center;
-      padding: 20px 10px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    #sidebar .logo img {
-      max-width: 180px;
-      height: auto;
-    }
-
-    #sidebar .profile {
-      text-align: center;
-      padding: 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    #sidebar .profile img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      margin-bottom: 10px;
-    }
-
-    #sidebar .profile h3 {
-      margin: 0;
-      font-size: 16px;
-      color: #fdd835;
-    }
-
-    #sidebar nav {
-      flex: 1;
-      padding: 10px;
-    }
-
-    #sidebar nav a {
-      display: block;
-      padding: 12px;
-      margin: 6px 0;
-      border-radius: 8px;
-      color: #eee;
-      text-decoration: none;
-      transition: background 0.2s;
-    }
-
-    #sidebar nav a:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    #menu-toggle {
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      background: #9a1b1b;
-      color: white;
-      border: none;
-      padding: 10px 14px;
-      font-size: 18px;
-      border-radius: 6px;
-      cursor: pointer;
-      z-index: 1000;
-      font-family: 'Orbitron', sans-serif;
-    }
-
-    #main {
-      margin-left: 0;
-      padding: 20px;
-      transition: margin-left 0.3s ease;
-      flex: 1;
-    }
-
-    #sidebar.open~#main {
-      margin-left: 250px;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/Oryn/Estilos/styles/menu.css">
+  <script src="./scripts/config.js"></script>
 </head>
 
 <body>
-  <button id="menu-toggle">☰</button>
+  <!-- BARRA DE ÍCONES FIXA -->
+  <div id="icon-bar">
+    <button id="menu-toggle">☰</button>
+    <div class="linhas">
+      <img class="iconUser user-avatar" src="" alt="User" title="User" onclick="window.location.href='#'">
+    </div>
+    <img class="icon" src="/Oryn/Estilos/icones/bussola.png" title="Dashboard"
+      onclick="window.location.href='dashboard.html'">
+    <img class="icon" src="/Oryn/Estilos/icones/livro.png" title="Sistemas"
+      onclick="window.location.href='sistemas/sistemas.html'">
+    <img class="icon" src="/Oryn/Estilos/icones/mapa.png" title="Tabletop"
+      onclick="window.location.href='tabletop/test.html'">
+    <img class="icon" src="/Oryn/Estilos/icones/porta-logout.png" title="Sair" id="logout-icon">
+  </div>
 
   <div id="sidebar">
+    <div class="controlLarge">
+      <button id="menu-toggle-closed">☰</button>
+    </div>
     <div class="logo">
-      <img src="titulo.png" alt="neXus">
+      <img src="/Oryn/Estilos/imagens/5-titulo.png" alt="Oryn">
     </div>
     <div class="profile">
-      <img id="user-avatar" src="" alt="User">
+      <img class="user-avatar" src="" alt="User">
       <h3 id="user-name">Usuário</h3>
     </div>
     <nav>
-      <a href="Triplice_Tenebrosa/Mesinha.html">Triple Triad</a>
+      <!-- <a href="Triplice_Tenebrosa/Mesinha.html">Triple Triad</a> -->
+      <a href="dashboard.html"> Dashboard</a>
       <a href="sistemas/sistemas.html">Sistemas</a>
       <a href="tabletop/test.html">Tabletop</a>
       <a href="#" id="logout">Sair</a>
@@ -129,37 +48,11 @@
   </div>
 
   <div id="main">
-    <h1>Bem-vindo ao Oryn</h1>
+    <h1>Bem-vindo ao Oryn!</h1>
     <p>Escolha uma das seções no menu lateral para continuar.</p>
   </div>
 
-  <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-    const SUPABASE_URL = "https://ngehsncshjivmnqwxaqu.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    const toggleBtn = document.getElementById("menu-toggle");
-    const sidebar = document.getElementById("sidebar");
-    toggleBtn.addEventListener("click", () => sidebar.classList.toggle("open"));
-
-    async function loadUser() {
-      const session = await handleDashboardRedirect(supabase);
-      if (!session) return;
-
-      const user = session.user || { user_metadata: {} };
-      document.getElementById("user-name").innerText = user.user_metadata.full_name || "Usuário sem nome";
-      document.getElementById("user-avatar").src = user.user_metadata.avatar_url || "https://via.placeholder.com/60";
-    }
-
-    loadUser();
-
-    document.getElementById("logout").addEventListener("click", async () => {
-      await supabase.auth.signOut();
-      window.location.href = "index.html";
-    });
-  </script>
+  <script type="module" src="/Oryn/scripts/menuConfig.js"></script>
 </body>
 
 </html>

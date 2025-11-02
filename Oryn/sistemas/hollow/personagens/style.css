@@ -1,21 +1,249 @@
-/* Geral do corpo e layout */
-body {
-  font-family: 'Franklin Gothic Medium','Arial Narrow',sans-serif;
-  margin:0; padding:0;
-  min-height:100vh;
-  background: linear-gradient(135deg,#0d1b2a,#1a2a4d);
-  color:#e0e0e0;
-  position:relative;
-  overflow:hidden;
-}
+  body {
+      font-family: 'Franklin Gothic Medium', 'Arial Narrow', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0d1b2a, #1a2a4d);
+      color: #e0e0e0;
+      position: relative;
+      overflow: hidden;
+  }
 
-/* Canvas de partículas */
-#bgParticles {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  pointer-events: none;
-}
+  h1 {
+      margin: 30px 0 30px 20px;
+      color: #a0c4ff;
+  }
+
+  #personagensContainer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 12px;
+      width: 95%;
+      max-width: 1000px;
+      z-index: 1;
+      padding: 10px 0 10px 20px;
+  }
+
+  .personagem-btn {
+      position: relative;
+      cursor: pointer;
+      border-radius: 8px;
+      background: rgba(17, 20, 36, 0.8);
+      padding: 6px;
+      width: 300px;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      transition: transform .18s, box-shadow .18s, background-color .18s;
+  }
+
+  .personagem-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 30px #090b11;
+      background-color: #142e4e;
+  }
+
+  .personagem-btn.selected {
+      outline: 3px solid rgba(116, 192, 252, 0.7);
+  }
+
+  .personagem-btn.highlight {
+      animation: pop .9s ease forwards;
+  }
+
+  @keyframes pop {
+      0% {
+          transform: scale(.6);
+          opacity: 0;
+      }
+
+      60% {
+          transform: scale(1.15);
+          opacity: 1;
+      }
+
+      100% {
+          transform: scale(1);
+          opacity: 1;
+      }
+  }
+
+  .delete-btn {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      border: none;
+      border-radius: 50%;
+      background: transparent;
+      cursor: pointer;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity .2s;
+      padding: 0;
+  }
+
+  .delete-btn img {
+      width: 100%;
+      height: 100%;
+  }
+
+  .delete-btn:hover img {
+      opacity: 0.8;
+  }
+
+  .personagem-img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      margin-right: 12px;
+  }
+
+  .personagem-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: #e0e0e0;
+      font-size: 14px;
+  }
+
+  .personagem-info b {
+      margin-bottom: 4px;
+  }
+
+  #btnCriar {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #1a2a4d;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 2;
+  }
+
+  #btnCriar:hover {
+      background: #0f1b36;
+  }
+
+  #bgParticles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+  }
+
+  /* Modal de criação */
+  #modalCriar {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 10;
+      align-items: center;
+      justify-content: center;
+  }
+
+  #modalContent {
+      background: #161e30;
+      padding: 20px;
+      border-radius: 12px;
+      min-width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      color: #e0e0e0;
+  }
+
+  #modalContent label {
+      margin-bottom: 4px;
+  }
+
+  #modalContent input,
+  #modalContent select {
+      padding: 6px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      background: #131f32;
+      color: #e0e0e0;
+  }
+
+  #modalContent input::placeholder {
+      color: #b0c4ff;
+  }
+
+  #modalButtons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 10px;
+  }
+
+  .modalBtn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #343434;
+      color: #fff;
+      transition: background .2s;
+  }
+
+  .modalBtn:hover {
+      background: #505050;
+  }
+
+  /* Modal de exclusão */
+  #modalExcluir {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 11;
+      align-items: center;
+      justify-content: center;
+  }
+
+  #modalExcluirContent {
+      background: #161e30;
+      padding: 20px;
+      border-radius: 12px;
+      min-width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      color: #e0e0e0;
+  }
+
+  #modalExcluirContent input {
+      padding: 6px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      background: #131f32;
+      color: #e0e0e0;
+  }
+
+  #modalExcluirContent .info {
+      font-size: 14px;
+      margin-bottom: 6px;
+  }
