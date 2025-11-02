@@ -52,7 +52,22 @@
     <h1>Bem-vindo ao Oryn!</h1>
     <p>Escolha uma das seções no menu lateral para continuar.</p>
   </div>
+  <script>
+    const SUPABASE_URL = "https://ngehsncshjivmnqwxaqu.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZWhzbmNzaGppdm1ucXd4YXF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1OTM4MzUsImV4cCI6MjA3NjE2OTgzNX0.hTEIKG6-Of5cEfKg1ejohNyWpsnCziD1P72k22AYOso";
 
+    const { createClient } = window.supabase;
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      await handleDashboardRedirect(supabase);
+    });
+
+    document.getElementById("logout").addEventListener("click", async () => {
+      await supabase.auth.signOut();
+      window.location.href = "index.html";
+    });
+  </script>
   <script type="module" src="./scripts/menuConfig.js"></script>
 </body>
 

@@ -70,16 +70,15 @@
     const { createClient } = window.supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Se já estiver logado, pula login
     document.addEventListener("DOMContentLoaded", async () => {
       const { data: { session } } = await supabaseClient.auth.getSession();
-      if (session && !enableTest) {
+
+      const url = new URL(window.location.href);
+      const isReturningFromOAuth = url.hash.includes("access_token");
+
+      if (session && !enableTest && !isReturningFromOAuth) {
         window.location.href = "dashboard.html";
       }
-    });
-
-    document.getElementById("googleLogin").addEventListener("click", () => {
-      handleLoginRedirect(supabaseClient);
     });
   </script>
 </body>
