@@ -10,9 +10,9 @@
   window.addEventListener('resize', resize);
 
   const butterflyPaths = [
-    '/Oryn/Estilos/particulas/imgs/borboleta1.png',
-    '/Oryn/Estilos/particulas/imgs/borboleta2.png',
-    '/Oryn/Estilos/particulas/imgs/borboleta3.png'
+    './particulas/imgs/borboleta1.png',
+    './particulas/imgs/imgs/borboleta2.png',
+    './particulas/imgs/imgs/borboleta3.png'
   ];
 
   // Função que carrega todas as imagens e só resolve quando todas estiverem prontas
