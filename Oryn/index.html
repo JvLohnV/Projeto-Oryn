@@ -71,14 +71,21 @@
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     document.addEventListener("DOMContentLoaded", async () => {
+      // 🔍 Verifica se já existe uma sessão ativa
       const { data: { session } } = await supabaseClient.auth.getSession();
 
+      // Evita redirecionar enquanto o usuário está voltando do OAuth
       const url = new URL(window.location.href);
       const isReturningFromOAuth = url.hash.includes("access_token");
 
       if (session && !enableTest && !isReturningFromOAuth) {
         window.location.href = "dashboard.html";
       }
+
+      const btn = document.getElementById("googleLogin");
+      btn.addEventListener("click", async () => {
+        await handleLoginRedirect(supabaseClient);
+      });
     });
   </script>
 </body>
